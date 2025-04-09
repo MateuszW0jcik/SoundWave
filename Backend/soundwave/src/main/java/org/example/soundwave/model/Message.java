@@ -1,0 +1,36 @@
+package org.example.soundwave.model;
+
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
+
+@Entity
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Table(name = "messages")
+public class Message {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    private String message;
+
+    private LocalDateTime sentAt;
+
+    private String name;
+
+    private String email;
+
+    public void setUser(User user){
+        this.user = user;
+        user.getMessages().add(this);
+    }
+}
