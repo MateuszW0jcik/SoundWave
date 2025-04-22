@@ -1,4 +1,4 @@
-package org.example.soundwave.model;
+package org.example.soundwave.model.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

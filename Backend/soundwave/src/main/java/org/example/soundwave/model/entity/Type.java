@@ -1,4 +1,4 @@
-package org.example.soundwave.model;
+package org.example.soundwave.model.entity;
 
 public enum Type {
     Over_ear,

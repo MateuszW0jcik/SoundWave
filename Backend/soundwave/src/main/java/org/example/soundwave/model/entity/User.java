@@ -1,4 +1,4 @@
-package org.example.soundwave.model;
+package org.example.soundwave.model.entity;
 
 
 import jakarta.persistence.*;
@@ -24,8 +24,13 @@ public class User {
 
     private String lastName;
 
+    @Column(unique = true, nullable = false)
+    private String username;
+
+    @Column(unique = true, nullable = false)
     private String email;
 
+    @Column(nullable = false)
     private String password;
 
     @OneToMany(mappedBy = "user")
@@ -42,9 +47,15 @@ public class User {
 
     private String rememberToken;
 
-    private Boolean admin;
+    @ManyToMany
+    @JoinTable(
+            name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<Role> roles = new HashSet<>();
 
-    private Boolean active;
+    private boolean active;
 
     private LocalDateTime createdAt;
 
