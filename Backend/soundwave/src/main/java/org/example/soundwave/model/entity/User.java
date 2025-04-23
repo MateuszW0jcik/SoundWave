@@ -49,6 +49,14 @@ public class User {
 
     @ManyToMany
     @JoinTable(
+            name = "user_shopping_cart_items",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "shopping_cart_item_id")
+    )
+    private Set<ShoppingCartItem> shoppingCartItems = new HashSet<>();
+
+    @ManyToMany
+    @JoinTable(
             name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
@@ -72,5 +80,9 @@ public class User {
     public void addPayment(Payment payment){
         payments.add(payment);
         payment.setUser(this);
+    }
+
+    public void addShoppingCartItem(ShoppingCartItem shoppingCartItem){
+        shoppingCartItems.add(shoppingCartItem);
     }
 }
