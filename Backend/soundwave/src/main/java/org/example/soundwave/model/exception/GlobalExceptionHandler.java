@@ -14,4 +14,11 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorResponse("AUTH_ERROR", ex.getMessage()));
     }
+
+    @ExceptionHandler(BrandException.class)
+    public ResponseEntity<ErrorResponse> handleAuthException(BrandException ex) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponse("BRAND_ERROR", ex.getMessage()));
+    }
 }
