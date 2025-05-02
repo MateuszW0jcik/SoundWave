@@ -3,17 +3,20 @@ package org.example.soundwave.model.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 @Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Table(name = "users")
 public class User {
     @Id
@@ -33,6 +36,9 @@ public class User {
     @Column(nullable = false)
     private String password;
 
+    @OneToOne
+    private RefreshToken refreshToken;
+
     @OneToMany(mappedBy = "user")
     private Set<Contact> contacts = new HashSet<>();
 
@@ -44,8 +50,6 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private Set<Message> messages = new HashSet<>();
-
-    private String rememberToken;
 
     @ManyToMany
     @JoinTable(
@@ -80,6 +84,10 @@ public class User {
     public void addPayment(Payment payment){
         payments.add(payment);
         payment.setUser(this);
+    }
+
+    public void addRole(Role role){
+        roles.add(role);
     }
 
     public void addShoppingCartItem(ShoppingCartItem shoppingCartItem){

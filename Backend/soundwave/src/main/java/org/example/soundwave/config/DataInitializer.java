@@ -23,9 +23,6 @@ public class DataInitializer implements CommandLineRunner {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    @Value("${admin.username}")
-    private String adminUsername;
-
     @Value("${admin.password}")
     private String adminPassword;
 
@@ -53,7 +50,7 @@ public class DataInitializer implements CommandLineRunner {
     private void createAdminIfNotExists() {
         if (!userRepository.existsByEmail(adminEmail)) {
             User admin = new User();
-            admin.setUsername(adminUsername);
+            admin.setUsername(adminEmail);
             admin.setPassword(passwordEncoder.encode(adminPassword));
             admin.setEmail(adminEmail);
             admin.setFirstName("Admin");

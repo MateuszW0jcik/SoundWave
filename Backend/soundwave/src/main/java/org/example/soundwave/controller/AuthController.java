@@ -2,11 +2,22 @@ package org.example.soundwave.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.example.soundwave.model.dto.TokenPair;
+import org.example.soundwave.model.entity.RefreshToken;
 import org.example.soundwave.model.entity.User;
+import org.example.soundwave.model.exception.AuthException;
 import org.example.soundwave.model.request.LoginRequest;
+import org.example.soundwave.model.request.RefreshRequest;
 import org.example.soundwave.model.request.RegisterRequest;
+import org.example.soundwave.model.response.LoginResponse;
+import org.example.soundwave.model.response.RefreshResponse;
+import org.example.soundwave.repository.UserRepository;
+import org.example.soundwave.security.JwtTokenProvider;
 import org.example.soundwave.service.AuthService;
+import org.example.soundwave.service.RefreshTokenService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,15 +28,24 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AuthController {
     private final AuthService authService;
+    private final RefreshTokenService refreshTokenService;
 
     @PostMapping("/register")
     public ResponseEntity<User> register(@Valid @RequestBody RegisterRequest request) {
-        return ResponseEntity.ok(authService.register(request));
+        authService.register(request);
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@Valid @RequestBody LoginRequest request) {
-        String token = authService.login(request);
-        return ResponseEntity.ok(token);
+    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
+        return ResponseEntity.ok(authService.login(request));
+    }
+
+    @PostMapping("/token/refresh")
+    public ResponseEntity<RefreshResponse> refreshToken(@RequestBody RefreshRequest request) {
+        TokenPair tokens = refreshTokenService.refreshAuthTokens(request.getRefreshToken());
+        return ResponseEntity.ok(
+                new RefreshResponse(tokens.getAccessToken(), tokens.getRefreshToken())
+        );
     }
 }
