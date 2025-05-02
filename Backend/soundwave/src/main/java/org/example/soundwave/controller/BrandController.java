@@ -3,11 +3,9 @@ package org.example.soundwave.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.soundwave.model.dto.BrandDTO;
-import org.example.soundwave.model.dto.ProductDTO;
-import org.example.soundwave.model.request.AddBrandRequest;
-import org.example.soundwave.model.request.AddProductRequest;
 import org.example.soundwave.service.BrandService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,9 +17,24 @@ public class BrandController {
     private final BrandService brandService;
 
     @PostMapping("/add")
-    public ResponseEntity<Void> addBrand(@Valid @RequestBody AddBrandRequest request) {
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> addBrand(@Valid @RequestBody BrandDTO request) {
         brandService.addBrand(request);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> editBrand(@PathVariable Long id, @Valid @RequestBody BrandDTO request) {
+        brandService.editBrand(id, request);
         return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> deleteBrand(@PathVariable Long id) {
+        brandService.deleteBrand(id);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping

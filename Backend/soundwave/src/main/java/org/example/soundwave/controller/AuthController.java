@@ -33,7 +33,7 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<User> register(@Valid @RequestBody RegisterRequest request) {
         authService.register(request);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/login")
@@ -42,7 +42,7 @@ public class AuthController {
     }
 
     @PostMapping("/token/refresh")
-    public ResponseEntity<RefreshResponse> refreshToken(@RequestBody RefreshRequest request) {
+    public ResponseEntity<RefreshResponse> refreshToken(@Valid @RequestBody RefreshRequest request) {
         TokenPair tokens = refreshTokenService.refreshAuthTokens(request.getRefreshToken());
         return ResponseEntity.ok(
                 new RefreshResponse(tokens.getAccessToken(), tokens.getRefreshToken())

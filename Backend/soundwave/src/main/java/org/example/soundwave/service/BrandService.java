@@ -2,10 +2,8 @@ package org.example.soundwave.service;
 
 import lombok.AllArgsConstructor;
 import org.example.soundwave.model.dto.BrandDTO;
-import org.example.soundwave.model.dto.ProductDTO;
 import org.example.soundwave.model.entity.Brand;
 import org.example.soundwave.model.exception.BrandException;
-import org.example.soundwave.model.request.AddBrandRequest;
 import org.example.soundwave.repository.BrandRepository;
 import org.springframework.stereotype.Service;
 
@@ -17,21 +15,37 @@ import java.util.stream.Collectors;
 public class BrandService {
     private BrandRepository brandRepository;
 
-    public void addBrand(AddBrandRequest brandAddRequest){
-        if(brandRepository.existsBrandByName(brandAddRequest.getBrandName())){
-            throw new BrandException("Brand " + brandAddRequest.getBrandName() + " exist");
+    public void addBrand(BrandDTO brandDTO) {
+        if (brandRepository.existsBrandByName(brandDTO.getBrandName())) {
+            throw new BrandException("Brand " + brandDTO.getBrandName() + " exist");
         }
 
         Brand brand = Brand.builder()
-                .name(brandAddRequest.getBrandName()).build();
+                .name(brandDTO.getBrandName()).build();
 
         brandRepository.save(brand);
     }
 
-    public List<BrandDTO> getAllBrands(){
+    public List<BrandDTO> getAllBrands() {
         return brandRepository.findAll()
                 .stream()
                 .map(BrandDTO::new)
                 .collect(Collectors.toList());
+    }
+
+    public void editBrand(Long id, BrandDTO request) {
+        Brand brand = brandRepository.findById(id)
+                .orElseThrow(() -> new BrandException("Brand with " + id + " do not exist"));
+
+        brand.setName(request.getBrandName());
+
+        brandRepository.save(brand);
+    }
+
+    public void deleteBrand(Long id) {
+        Brand brand = brandRepository.findById(id)
+                .orElseThrow(() -> new BrandException("Brand with " + id + " do not exist"));
+
+         brandRepository.delete(brand);
     }
 }
