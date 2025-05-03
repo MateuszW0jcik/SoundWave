@@ -17,6 +17,7 @@ public class ProductDTO {
     private String description;
     private Boolean wireless;
     private BigDecimal price;
+    private Integer quantity;
 
     public ProductDTO(Product product) {
         this.name = product.getName();
@@ -26,5 +27,6 @@ public class ProductDTO {
         this.description = product.getDescription();
         this.wireless = product.getWireless();
         this.price = product.getPrice();
+        this.quantity = product.getQuantity();
     }
 }

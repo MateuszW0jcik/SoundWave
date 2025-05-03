@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDateTime;
 
 @Entity
@@ -20,28 +21,26 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String name;
 
+    @Enumerated(EnumType.STRING)
     private Type type;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "brand_id")
     private Brand brand;
 
     private String imageURL;
 
+    @Column(columnDefinition = "TEXT")
     private String description;
 
-    private Boolean wireless;
+    private Boolean wireless = false;
 
     private BigDecimal price;
 
     private Integer quantity;
 
-    private LocalDateTime addedAt;
-
-    public void setBrand(Brand brand){
-        this.brand = brand;
-        brand.getProducts().add(this);
-    }
+    private Instant addedAt;
 }

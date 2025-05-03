@@ -11,5 +11,7 @@ public class BrandDTO {
     @Size(max = 50)
     private String brandName;
 
-    public BrandDTO(Brand brand){brandName = brand.getName();}
+    public BrandDTO(Brand brand) {
+        brandName = brand.getName();
+    }
 }

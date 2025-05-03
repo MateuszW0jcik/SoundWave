@@ -2,6 +2,7 @@ package org.example.soundwave.model.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -9,6 +10,7 @@ import java.time.LocalDate;
 
 @Entity
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "payments")
@@ -17,11 +19,8 @@ public class Payment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Enumerated(EnumType.STRING)
     private PaymentMethod paymentMethod;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
 
     private String lastDigits;
 

@@ -11,6 +11,7 @@ import org.example.soundwave.repository.BrandRepository;
 import org.example.soundwave.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -22,7 +23,7 @@ public class ProductService {
     private ProductRepository productRepository;
     private BrandRepository brandRepository;
 
-    public void addProduct(AddProductRequest productAddRequest) {
+    public void addProduct(ProductDTO productAddRequest) {
         Product product = Product.builder()
                 .name(productAddRequest.getName())
                 .price(productAddRequest.getPrice())
@@ -31,7 +32,7 @@ public class ProductService {
                 .wireless(productAddRequest.getWireless())
                 .type(productAddRequest.getType())
                 .imageURL(productAddRequest.getImageURL())
-                .addedAt(LocalDateTime.now()).build();
+                .addedAt(Instant.now()).build();
 
         Optional<Brand> brand = brandRepository.findBrandByName(productAddRequest.getBrandName());
         brand.ifPresentOrElse(

@@ -20,9 +20,6 @@ public class Brand {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(unique = true, nullable = false)
     private String name;
-
-    @OneToMany(mappedBy = "brand")
-    private Set<Product> products = new HashSet<>();
-
 }

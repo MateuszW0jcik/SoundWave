@@ -19,7 +19,7 @@ public class ProductController {
 
     @PostMapping("/add")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Void> addProduct(@Valid @RequestBody AddProductRequest request) {
+    public ResponseEntity<Void> addProduct(@Valid @RequestBody ProductDTO request) {
         productService.addProduct(request);
         return ResponseEntity.noContent().build();
     }

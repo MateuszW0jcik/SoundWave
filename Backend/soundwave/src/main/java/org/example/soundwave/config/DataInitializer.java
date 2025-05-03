@@ -11,6 +11,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -55,7 +56,7 @@ public class DataInitializer implements CommandLineRunner {
             admin.setEmail(adminEmail);
             admin.setFirstName("Admin");
             admin.setLastName("Admin");
-            admin.setCreatedAt(LocalDateTime.now());
+            admin.setCreatedAt(Instant.now());
             admin.setActive(true);
 
             Set<Role> roles = new HashSet<>();

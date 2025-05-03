@@ -2,11 +2,13 @@ package org.example.soundwave.model.entity;
 
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -36,54 +38,48 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    @OneToOne
-    private RefreshToken refreshToken;
-
-    @OneToMany(mappedBy = "user")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "user_id")
+    @Builder.Default
     private Set<Contact> contacts = new HashSet<>();
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "user_id")
+    @Builder.Default
     private Set<Address> addresses = new HashSet<>();
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "user_id")
+    @Builder.Default
     private Set<Payment> payments = new HashSet<>();
 
-    @OneToMany(mappedBy = "user")
-    private Set<Message> messages = new HashSet<>();
-
-    @ManyToMany
-    @JoinTable(
-            name = "user_shopping_cart_items",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "shopping_cart_item_id")
-    )
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "user_id")
+    @Builder.Default
     private Set<ShoppingCartItem> shoppingCartItems = new HashSet<>();
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "user_roles",
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
+    @Builder.Default
     private Set<Role> roles = new HashSet<>();
 
-    private boolean active;
+    private boolean active = false;
 
-    private LocalDateTime createdAt;
+    private Instant createdAt;
 
     public void addAddress(Address address) {
         addresses.add(address);
-        address.setUser(this);
     }
 
     public void addContact(Contact contact) {
         contacts.add(contact);
-        contact.setUser(this);
     }
 
     public void addPayment(Payment payment){
         payments.add(payment);
-        payment.setUser(this);
     }
 
     public void addRole(Role role){

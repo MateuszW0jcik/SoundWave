@@ -2,10 +2,12 @@ package org.example.soundwave.model.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -14,21 +16,25 @@ import java.util.Set;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Table(name = "orders")
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "order_id")
+    @Builder.Default
     private Set<OrderedItem> orderedItems = new HashSet<>();
 
     private BigDecimal totalPrice;
 
+    @Enumerated(EnumType.STRING)
     private PaymentMethod paymentMethod;
 
     private String country;
@@ -45,10 +51,9 @@ public class Order {
 
     private String phoneNumber;
 
-    private LocalDateTime placedOn;
+    private Instant placedOn;
 
     public void addOrderedItem(OrderedItem orderedItem){
         orderedItems.add(orderedItem);
-        orderedItem.setOrder(this);
     }
 }

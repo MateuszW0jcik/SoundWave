@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Collections;
@@ -44,7 +45,7 @@ public class AuthService {
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
                 .active(true)
-                .createdAt(LocalDateTime.now()).build();
+                .createdAt(Instant.now()).build();
 
         Role userRole = roleRepository.findByName("USER")
                 .orElseThrow(() -> new AuthException("Server problem"));
