@@ -18,21 +18,21 @@ public class BrandController {
 
     @PostMapping("/add")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Void> addBrand(@Valid @RequestBody BrandDTO request) {
+    public ResponseEntity<?> addBrand(@Valid @RequestBody BrandDTO request) {
         brandService.addBrand(request);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Void> editBrand(@PathVariable Long id, @Valid @RequestBody BrandDTO request) {
+    public ResponseEntity<?> editBrand(@PathVariable Long id, @Valid @RequestBody BrandDTO request) {
         brandService.editBrand(id, request);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Void> deleteBrand(@PathVariable Long id) {
+    public ResponseEntity<?> deleteBrand(@PathVariable Long id) {
         brandService.deleteBrand(id);
         return ResponseEntity.noContent().build();
     }
