@@ -2,7 +2,6 @@ package org.example.soundwave.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.example.soundwave.model.request.AddProductRequest;
 import org.example.soundwave.model.dto.ProductDTO;
 import org.example.soundwave.service.ProductService;
 import org.springframework.http.ResponseEntity;
@@ -24,8 +23,26 @@ public class ProductController {
         return ResponseEntity.noContent().build();
     }
 
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> editProduct(@PathVariable Long id, @Valid @RequestBody ProductDTO request) {
+        productService.editProduct(id, request);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> deleteBrand(@PathVariable Long id) {
+        productService.deleteProduct(id);
+        return ResponseEntity.noContent().build();
+    }
+
     @GetMapping
-    public ResponseEntity<List<ProductDTO>> getAllProducts() {
-        return ResponseEntity.ok(productService.getAllProducts());
+    public ResponseEntity<List<ProductDTO>> getBrands(@RequestParam(required = false) Integer page) {
+        if (page != null) {
+            return ResponseEntity.ok(productService.getProductsByPage(page));
+        } else {
+            return ResponseEntity.ok(productService.getAllProducts());
+        }
     }
 }

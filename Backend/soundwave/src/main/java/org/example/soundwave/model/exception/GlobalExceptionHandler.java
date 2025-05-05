@@ -16,9 +16,16 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(BrandException.class)
-    public ResponseEntity<ErrorResponse> handleAuthException(BrandException ex) {
+    public ResponseEntity<ErrorResponse> handleBrandException(BrandException ex) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorResponse("BRAND_ERROR", ex.getMessage()));
+    }
+
+    @ExceptionHandler(ProductException.class)
+    public ResponseEntity<ErrorResponse> handleProductException(ProductException ex) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponse("PRODUCT_ERROR", ex.getMessage()));
     }
 }

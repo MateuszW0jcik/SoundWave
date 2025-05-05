@@ -1,18 +1,20 @@
 package org.example.soundwave.service;
 
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
+import org.example.soundwave.config.PaginationProperties;
+import org.example.soundwave.model.dto.BrandDTO;
 import org.example.soundwave.model.entity.Brand;
 import org.example.soundwave.model.entity.Product;
 import org.example.soundwave.model.exception.BrandException;
-import org.example.soundwave.model.request.AddProductRequest;
 import org.example.soundwave.model.dto.ProductDTO;
+import org.example.soundwave.model.exception.ProductException;
 import org.example.soundwave.repository.BrandRepository;
 import org.example.soundwave.repository.ProductRepository;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -20,27 +22,24 @@ import java.util.stream.Collectors;
 @Service
 @AllArgsConstructor
 public class ProductService {
-    private ProductRepository productRepository;
-    private BrandRepository brandRepository;
+    private final ProductRepository productRepository;
+    private final BrandService brandService;
+    private final PaginationProperties paginationProperties;
 
-    public void addProduct(ProductDTO productAddRequest) {
+    public void addProduct(ProductDTO request) {
         Product product = Product.builder()
-                .name(productAddRequest.getName())
-                .price(productAddRequest.getPrice())
-                .description(productAddRequest.getDescription())
-                .quantity(productAddRequest.getQuantity())
-                .wireless(productAddRequest.getWireless())
-                .type(productAddRequest.getType())
-                .imageURL(productAddRequest.getImageURL())
+                .name(request.getName())
+                .price(request.getPrice())
+                .description(request.getDescription())
+                .quantity(request.getQuantity())
+                .wireless(request.getWireless())
+                .type(request.getType())
+                .imageURL(request.getImageURL())
                 .addedAt(Instant.now()).build();
 
-        Optional<Brand> brand = brandRepository.findBrandByName(productAddRequest.getBrandName());
-        brand.ifPresentOrElse(
-                product::setBrand,
-                () -> {
-                    throw new BrandException("Brand not found: " + productAddRequest.getBrandName());
-                }
-        );
+        Brand brand = brandService.findBrandByName(request.getBrandName());
+
+        product.setBrand(brand);
 
         productRepository.save(product);
     }
@@ -50,5 +49,41 @@ public class ProductService {
                 .stream()
                 .map(ProductDTO::new)
                 .collect(Collectors.toList());
+    }
+
+    public List<ProductDTO> getProductsByPage(Integer page) {
+        Pageable pageable = PageRequest.of(page, paginationProperties.getDefaultPageSize());
+        return productRepository.findAll(pageable)
+                .stream()
+                .map(ProductDTO::new)
+                .collect(Collectors.toList());
+    }
+
+    public void editProduct(Long id, ProductDTO request) {
+        Product product = findProductById(id);
+
+        Brand brand = brandService.findBrandByName(request.getBrandName());
+
+        product.setName(request.getName());
+        product.setType(request.getType());
+        product.setBrand(brand);
+        product.setImageURL(request.getImageURL());
+        product.setDescription(request.getDescription());
+        product.setWireless(request.getWireless());
+        product.setPrice(request.getPrice());
+        product.setQuantity(request.getQuantity());
+
+        productRepository.save(product);
+    }
+
+    public void deleteProduct(Long id) {
+        Product product = findProductById(id);
+
+        productRepository.delete(product);
+    }
+
+    public Product findProductById(Long id) {
+        return productRepository.findById(id)
+                .orElseThrow(() -> new ProductException("Product with id: " + id + " do not exist"));
     }
 }

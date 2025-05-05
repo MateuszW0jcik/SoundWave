@@ -38,7 +38,11 @@ public class BrandController {
     }
 
     @GetMapping
-    public ResponseEntity<List<BrandDTO>> getAllBrands() {
-        return ResponseEntity.ok(brandService.getAllBrands());
+    public ResponseEntity<List<BrandDTO>> getBrands(@RequestParam(required = false) Integer page) {
+        if (page != null) {
+            return ResponseEntity.ok(brandService.getBrandsByPage(page));
+        } else {
+            return ResponseEntity.ok(brandService.getAllBrands());
+        }
     }
 }
