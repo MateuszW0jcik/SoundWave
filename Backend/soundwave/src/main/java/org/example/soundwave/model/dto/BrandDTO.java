@@ -7,8 +7,7 @@ import org.example.soundwave.model.entity.Brand;
 
 @Data
 public class BrandDTO {
-    @NotBlank
-    @Size(max = 50)
+    @NotBlank(message = "Name can't be empty")
     private String brandName;
 
     public BrandDTO(Brand brand) {

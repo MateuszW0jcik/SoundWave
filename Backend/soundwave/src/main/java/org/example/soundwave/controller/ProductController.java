@@ -32,13 +32,13 @@ public class ProductController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Void> deleteBrand(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
         productService.deleteProduct(id);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping
-    public ResponseEntity<List<ProductDTO>> getBrands(@RequestParam(required = false) Integer page) {
+    public ResponseEntity<List<ProductDTO>> getProducts(@RequestParam(required = false) Integer page) {
         if (page != null) {
             return ResponseEntity.ok(productService.getProductsByPage(page));
         } else {
