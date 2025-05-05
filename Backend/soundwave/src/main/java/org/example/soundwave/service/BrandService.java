@@ -21,7 +21,7 @@ public class BrandService {
 
     public void addBrand(BrandDTO brandDTO) {
         if (brandRepository.existsBrandByName(brandDTO.getBrandName())) {
-            throw new BrandException("Brand " + brandDTO.getBrandName() + " exist");
+            throw new BrandException("Brand with name: " + brandDTO.getBrandName() + " already exist");
         }
 
         Brand brand = Brand.builder()
@@ -47,7 +47,7 @@ public class BrandService {
 
     public void editBrand(Long id, BrandDTO request) {
         Brand brand = brandRepository.findById(id)
-                .orElseThrow(() -> new BrandException("Brand with " + id + " do not exist"));
+                .orElseThrow(() -> new BrandException("Brand with id: " + id + " do not exist"));
 
         brand.setName(request.getBrandName());
 
@@ -56,7 +56,7 @@ public class BrandService {
 
     public void deleteBrand(Long id) {
         Brand brand = brandRepository.findById(id)
-                .orElseThrow(() -> new BrandException("Brand with " + id + " do not exist"));
+                .orElseThrow(() -> new BrandException("Brand with id: " + id + " do not exist"));
 
          brandRepository.delete(brand);
     }

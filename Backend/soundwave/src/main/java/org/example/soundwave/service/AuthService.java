@@ -4,37 +4,29 @@ import lombok.RequiredArgsConstructor;
 import org.example.soundwave.model.entity.RefreshToken;
 import org.example.soundwave.model.exception.AuthException;
 import org.example.soundwave.model.request.LoginRequest;
-import org.example.soundwave.model.request.RefreshRequest;
 import org.example.soundwave.model.request.RegisterRequest;
 import org.example.soundwave.model.entity.Role;
 import org.example.soundwave.model.entity.User;
 import org.example.soundwave.model.response.LoginResponse;
 import org.example.soundwave.repository.RoleRepository;
-import org.example.soundwave.repository.UserRepository;
 import org.example.soundwave.security.JwtTokenProvider;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.Collections;
-import java.util.UUID;
 
 
 @Service
 @RequiredArgsConstructor
 public class AuthService {
-    private final UserRepository userRepository;
+    private final UserService userService;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider tokenProvider;
     private final RefreshTokenService refreshTokenService;
 
-
     public void register(RegisterRequest request) {
-        if (userRepository.existsByEmail(request.getEmail())) {
+        if (userService.existsByEmail(request.getEmail())) {
             throw new AuthException("Email already in use");
         }
 
@@ -51,12 +43,11 @@ public class AuthService {
                 .orElseThrow(() -> new AuthException("Server problem"));
         user.addRole(userRole);
 
-        userRepository.save(user);
+        userService.saveUser(user);
     }
 
     public LoginResponse login(LoginRequest request) {
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new AuthException("User not found"));
+        User user = userService.findUserByEmail(request.getEmail());
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new AuthException("Invalid password");
