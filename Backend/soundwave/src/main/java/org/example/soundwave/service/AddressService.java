@@ -3,7 +3,6 @@ package org.example.soundwave.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.soundwave.model.dto.AddressDTO;
-import org.example.soundwave.model.dto.BrandDTO;
 import org.example.soundwave.model.entity.Address;
 import org.example.soundwave.model.entity.User;
 import org.example.soundwave.model.exception.AddressException;
@@ -72,7 +71,7 @@ public class AddressService {
         saveAddress(address);
     }
 
-    public List<AddressDTO> getUserAddress(User user) {
+    public List<AddressDTO> getUserAddresses(User user) {
         return user.getAddresses().stream()
                 .map(AddressDTO::new)
                 .collect(Collectors.toList());

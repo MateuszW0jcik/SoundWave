@@ -3,13 +3,10 @@ package org.example.soundwave.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.soundwave.model.dto.AddressDTO;
-import org.example.soundwave.model.dto.BrandDTO;
 import org.example.soundwave.model.entity.User;
-import org.example.soundwave.model.request.RegisterRequest;
 import org.example.soundwave.service.AddressService;
 import org.example.soundwave.service.UserService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -49,8 +46,8 @@ public class AddressController {
     }
 
     @GetMapping
-    public ResponseEntity<List<AddressDTO>> getUserAddress(@AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<List<AddressDTO>> getUserAddresses(@AuthenticationPrincipal UserDetails userDetails) {
         User user = userService.findUserByUsername(userDetails.getUsername());
-        return ResponseEntity.ok(addressService.getUserAddress(user));
+        return ResponseEntity.ok(addressService.getUserAddresses(user));
     }
 }
