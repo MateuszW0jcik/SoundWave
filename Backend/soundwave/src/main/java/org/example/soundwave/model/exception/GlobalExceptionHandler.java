@@ -28,4 +28,25 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorResponse("PRODUCT_ERROR", ex.getMessage()));
     }
+
+    @ExceptionHandler(AddressException.class)
+    public ResponseEntity<ErrorResponse> handleAddressException(AddressException ex) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponse("ADDRESS_ERROR", ex.getMessage()));
+    }
+
+    @ExceptionHandler(ContactException.class)
+    public ResponseEntity<ErrorResponse> handleContactException(ContactException ex) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponse("CONTACT_ERROR", ex.getMessage()));
+    }
+
+    @ExceptionHandler(MessageException.class)
+    public ResponseEntity<ErrorResponse> handleMessageException(MessageException ex) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponse("MESSAGE_ERROR", ex.getMessage()));
+    }
 }
