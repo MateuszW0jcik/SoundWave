@@ -4,11 +4,12 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.soundwave.model.dto.ProductDTO;
 import org.example.soundwave.service.ProductService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/product")
@@ -38,11 +39,7 @@ public class ProductController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ProductDTO>> getProducts(@RequestParam(required = false) Integer page) {
-        if (page != null) {
-            return ResponseEntity.ok(productService.getProductsByPage(page));
-        } else {
-            return ResponseEntity.ok(productService.getAllProducts());
-        }
+    public ResponseEntity<Page<ProductDTO>> getProducts(@PageableDefault(size = 20) Pageable pageable) {
+        return ResponseEntity.ok(productService.getProducts(pageable));
     }
 }

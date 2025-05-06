@@ -4,11 +4,12 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.soundwave.model.dto.BrandDTO;
 import org.example.soundwave.service.BrandService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/brand")
@@ -38,11 +39,7 @@ public class BrandController {
     }
 
     @GetMapping
-    public ResponseEntity<List<BrandDTO>> getBrands(@RequestParam(required = false) Integer page) {
-        if (page != null) {
-            return ResponseEntity.ok(brandService.getBrandsByPage(page));
-        } else {
-            return ResponseEntity.ok(brandService.getAllBrands());
-        }
+    public ResponseEntity<Page<BrandDTO>> getBrands(@PageableDefault(size = 20) Pageable pageable) {
+        return ResponseEntity.ok(brandService.getBrands(pageable));
     }
 }
