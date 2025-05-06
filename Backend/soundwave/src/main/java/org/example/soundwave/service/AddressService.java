@@ -7,6 +7,8 @@ import org.example.soundwave.model.entity.Address;
 import org.example.soundwave.model.entity.User;
 import org.example.soundwave.model.exception.AddressException;
 import org.example.soundwave.repository.AddressRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -75,5 +77,10 @@ public class AddressService {
         return user.getAddresses().stream()
                 .map(AddressDTO::new)
                 .collect(Collectors.toList());
+    }
+
+    public Page<AddressDTO> getAddresses(Pageable pageable) {
+        return addressRepository.findAll(pageable)
+                .map(AddressDTO::new);
     }
 }

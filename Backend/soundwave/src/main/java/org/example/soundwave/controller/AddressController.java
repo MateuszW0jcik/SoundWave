@@ -6,7 +6,11 @@ import org.example.soundwave.model.dto.AddressDTO;
 import org.example.soundwave.model.entity.User;
 import org.example.soundwave.service.AddressService;
 import org.example.soundwave.service.UserService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -49,5 +53,11 @@ public class AddressController {
     public ResponseEntity<List<AddressDTO>> getUserAddresses(@AuthenticationPrincipal UserDetails userDetails) {
         User user = userService.findUserByUsername(userDetails.getUsername());
         return ResponseEntity.ok(addressService.getUserAddresses(user));
+    }
+
+    @GetMapping("/all")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Page<AddressDTO>> getAddresses(@PageableDefault(size = 20) Pageable pageable) {
+        return ResponseEntity.ok(addressService.getAddresses(pageable));
     }
 }
