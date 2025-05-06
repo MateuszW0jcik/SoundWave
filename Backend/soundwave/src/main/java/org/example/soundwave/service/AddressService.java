@@ -78,9 +78,4 @@ public class AddressService {
                 .map(AddressDTO::new)
                 .collect(Collectors.toList());
     }
-
-    public Page<AddressDTO> getAddresses(Pageable pageable) {
-        return addressRepository.findAll(pageable)
-                .map(AddressDTO::new);
-    }
 }

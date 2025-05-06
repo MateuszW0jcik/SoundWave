@@ -2,15 +2,11 @@ package org.example.soundwave.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.example.soundwave.model.dto.AddressDTO;
+import org.example.soundwave.model.dto.ContactDTO;
 import org.example.soundwave.model.entity.User;
-import org.example.soundwave.service.AddressService;
+import org.example.soundwave.service.ContactService;
 import org.example.soundwave.service.UserService;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -18,40 +14,40 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/address")
+@RequestMapping("/api/contact")
 @RequiredArgsConstructor
-public class AddressController {
-    private final AddressService addressService;
+public class ContactController {
+    private final ContactService contactService;
     private final UserService userService;
 
     @PostMapping("/add")
-    public ResponseEntity<?> addAddress(@Valid @RequestBody AddressDTO request,
+    public ResponseEntity<?> addContact(@Valid @RequestBody ContactDTO request,
                                         @AuthenticationPrincipal UserDetails userDetails) {
         User user = userService.findUserByUsername(userDetails.getUsername());
-        addressService.addAddress(request, user);
+        contactService.addContact(request, user);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/user/{id}")
-    public ResponseEntity<?> deleteUserAddress(@PathVariable Long id,
+    public ResponseEntity<?> deleteUserContact(@PathVariable Long id,
                                                @AuthenticationPrincipal UserDetails userDetails) {
         User user = userService.findUserByUsername(userDetails.getUsername());
-        addressService.deleteUserAddress(id, user);
+        contactService.deleteUserContact(id, user);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> editUserAddress(@PathVariable Long id,
-                                         @Valid @RequestBody AddressDTO request,
-                                         @AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<?> editUserContact(@PathVariable Long id,
+                                             @Valid @RequestBody ContactDTO request,
+                                             @AuthenticationPrincipal UserDetails userDetails) {
         User user = userService.findUserByUsername(userDetails.getUsername());
-        addressService.editUserAddress(id, request, user);
+        contactService.editUserContact(id, request, user);
         return ResponseEntity.ok().build();
     }
 
     @GetMapping
-    public ResponseEntity<List<AddressDTO>> getUserAddresses(@AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<List<ContactDTO>> getUserContacts(@AuthenticationPrincipal UserDetails userDetails) {
         User user = userService.findUserByUsername(userDetails.getUsername());
-        return ResponseEntity.ok(addressService.getUserAddresses(user));
+        return ResponseEntity.ok(contactService.getUserContacts(user));
     }
 }
