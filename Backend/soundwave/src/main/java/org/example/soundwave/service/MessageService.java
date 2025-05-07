@@ -1,18 +1,27 @@
 package org.example.soundwave.service;
 
 import lombok.RequiredArgsConstructor;
+import org.example.soundwave.model.dto.BrandDTO;
 import org.example.soundwave.model.dto.MessageDTO;
+import org.example.soundwave.model.entity.Brand;
 import org.example.soundwave.model.entity.Message;
 import org.example.soundwave.model.entity.Product;
 import org.example.soundwave.model.entity.User;
 import org.example.soundwave.model.exception.MessageException;
 import org.example.soundwave.model.exception.ProductException;
 import org.example.soundwave.model.request.MessageRequest;
+import org.example.soundwave.model.response.PageResponse;
 import org.example.soundwave.repository.MessageRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -68,5 +77,26 @@ public class MessageService {
     public Message findMessageById(Long id){
         return messageRepository.findById(id)
                 .orElseThrow(() -> new MessageException("Message with id: " + id + " do not exist"));
+    }
+
+    public PageResponse<MessageDTO> getMessages(int pageNo, int pageSize, String sortBy, String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ?
+                Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+
+        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+        Page<Message> messages = messageRepository.findAll(pageable);
+
+        List<MessageDTO> content = messages.getContent()
+                .stream()
+                .map(MessageDTO::new)
+                .collect(Collectors.toList());
+
+        return new PageResponse<>(
+                content,
+                messages.getNumber(),
+                messages.getSize(),
+                messages.getTotalElements(),
+                messages.getTotalPages(),
+                messages.isLast());
     }
 }
