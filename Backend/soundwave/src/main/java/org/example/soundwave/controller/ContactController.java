@@ -1,5 +1,6 @@
 package org.example.soundwave.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.soundwave.model.dto.ContactDTO;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Tag(name = "Contact")
 @RestController
 @RequestMapping("/api/contact")
 @RequiredArgsConstructor
@@ -21,19 +23,17 @@ public class ContactController {
     private final ContactService contactService;
     private final UserService userService;
 
+    @GetMapping
+    public ResponseEntity<List<ContactDTO>> getUserContacts(@AuthenticationPrincipal UserDetails userDetails) {
+        User user = userService.findUserByUsername(userDetails.getUsername());
+        return ResponseEntity.ok(contactService.getUserContacts(user));
+    }
+
     @PostMapping("/add")
     public ResponseEntity<?> addContact(@Valid @RequestBody ContactRequest request,
                                         @AuthenticationPrincipal UserDetails userDetails) {
         User user = userService.findUserByUsername(userDetails.getUsername());
         contactService.addContact(request, user);
-        return ResponseEntity.noContent().build();
-    }
-
-    @DeleteMapping("/user/{id}")
-    public ResponseEntity<?> deleteUserContact(@PathVariable Long id,
-                                               @AuthenticationPrincipal UserDetails userDetails) {
-        User user = userService.findUserByUsername(userDetails.getUsername());
-        contactService.deleteUserContact(id, user);
         return ResponseEntity.noContent().build();
     }
 
@@ -46,9 +46,11 @@ public class ContactController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping
-    public ResponseEntity<List<ContactDTO>> getUserContacts(@AuthenticationPrincipal UserDetails userDetails) {
+    @DeleteMapping("/user/{id}")
+    public ResponseEntity<?> deleteUserContact(@PathVariable Long id,
+                                               @AuthenticationPrincipal UserDetails userDetails) {
         User user = userService.findUserByUsername(userDetails.getUsername());
-        return ResponseEntity.ok(contactService.getUserContacts(user));
+        contactService.deleteUserContact(id, user);
+        return ResponseEntity.noContent().build();
     }
 }

@@ -1,5 +1,6 @@
 package org.example.soundwave.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.soundwave.model.dto.BrandDTO;
@@ -16,11 +17,21 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+@Tag(name = "Brand")
 @RestController
 @RequestMapping("/api/brand")
 @RequiredArgsConstructor
 public class BrandController {
     private final BrandService brandService;
+
+    @GetMapping
+    public ResponseEntity<PageResponse<BrandDTO>> getBrands(
+            @RequestParam(value = "page", defaultValue = "0", required = false) int page,
+            @RequestParam(value = "size", defaultValue = "10", required = false) int size,
+            @RequestParam(value = "sortBy", defaultValue = "id", required = false) String sortBy,
+            @RequestParam(value = "sortDir", defaultValue = "asc", required = false) String sortDir) {
+        return ResponseEntity.ok(brandService.getBrands(page, size, sortBy, sortDir));
+    }
 
     @PostMapping("/add")
     @PreAuthorize("hasRole('ADMIN')")
@@ -41,14 +52,5 @@ public class BrandController {
     public ResponseEntity<?> deleteBrand(@PathVariable Long id) {
         brandService.deleteBrand(id);
         return ResponseEntity.noContent().build();
-    }
-
-    @GetMapping
-    public ResponseEntity<PageResponse<BrandDTO>> getBrands(
-            @RequestParam(value = "page", defaultValue = "0", required = false) int page,
-            @RequestParam(value = "size", defaultValue = "10", required = false) int size,
-            @RequestParam(value = "sortBy", defaultValue = "id", required = false) String sortBy,
-            @RequestParam(value = "sortDir", defaultValue = "asc", required = false) String sortDir) {
-        return ResponseEntity.ok(brandService.getBrands(page, size, sortBy, sortDir));
     }
 }
