@@ -62,6 +62,13 @@ public class RefreshTokenService {
         return new TokenPair(newAccessToken, newRefreshToken.getToken());
     }
 
+    public TokenPair createNewTokensForUser(User user){
+        String newAccessToken = jwtTokenProvider.generateToken(user);
+        RefreshToken newRefreshToken = createRefreshToken(user);
+
+        return new TokenPair(newAccessToken, newRefreshToken.getToken());
+    }
+
     public Optional<RefreshToken> findRefreshTokenByUser(User user) {
         return refreshTokenRepository.findRefreshTokenByUser(user);
     }
