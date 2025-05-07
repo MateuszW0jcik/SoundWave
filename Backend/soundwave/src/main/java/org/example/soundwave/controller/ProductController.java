@@ -43,7 +43,7 @@ public class ProductController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/products")
+    @GetMapping
     public ResponseEntity<PageResponse<ProductDTO>> getProducts(
             @RequestParam(value = "page", defaultValue = "0", required = false) int page,
             @RequestParam(value = "size", defaultValue = "10", required = false) int size,
@@ -52,6 +52,6 @@ public class ProductController {
             @RequestParam(value = "type", required = false) Type type,
             @RequestParam(value = "brandId", required = false) Long brandId,
             @RequestParam(value = "wireless", required = false) Boolean wireless) {
-        return ResponseEntity.ok(productService.getAllProducts(page, size, sortBy, sortDir, type, brandId, wireless));
+        return ResponseEntity.ok(productService.getProducts(page, size, sortBy, sortDir, type, brandId, wireless));
     }
 }

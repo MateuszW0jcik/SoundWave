@@ -3,7 +3,10 @@ package org.example.soundwave.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.soundwave.model.dto.BrandDTO;
+import org.example.soundwave.model.dto.ProductDTO;
+import org.example.soundwave.model.entity.Type;
 import org.example.soundwave.model.request.BrandRequest;
+import org.example.soundwave.model.response.PageResponse;
 import org.example.soundwave.service.BrandService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -41,10 +44,11 @@ public class BrandController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<BrandDTO>> getBrands(@PageableDefault(size = 20) Pageable pageable) {
-        if (pageable.getSort().isUnsorted() || pageable.getSort().toString().equals("[]")) {
-            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
-        }
-        return ResponseEntity.ok(brandService.getBrands(pageable));
+    public ResponseEntity<PageResponse<BrandDTO>> getBrands(
+            @RequestParam(value = "page", defaultValue = "0", required = false) int page,
+            @RequestParam(value = "size", defaultValue = "10", required = false) int size,
+            @RequestParam(value = "sortBy", defaultValue = "id", required = false) String sortBy,
+            @RequestParam(value = "sortDir", defaultValue = "asc", required = false) String sortDir) {
+        return ResponseEntity.ok(brandService.getBrands(page, size, sortBy, sortDir));
     }
 }

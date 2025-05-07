@@ -71,7 +71,7 @@ public class ProductService {
                 .orElseThrow(() -> new ProductException("Product with id: " + id + " do not exist"));
     }
 
-    public PageResponse<ProductDTO> getAllProducts(int pageNo, int pageSize, String sortBy, String sortDir,
+    public PageResponse<ProductDTO> getProducts(int pageNo, int pageSize, String sortBy, String sortDir,
                                                    Type type, Long brandId, Boolean wireless) {
 
         Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ?
