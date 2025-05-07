@@ -26,16 +26,16 @@ public class AuthService {
     private final RefreshTokenService refreshTokenService;
 
     public void register(RegisterRequest request) {
-        if (userService.existsByEmail(request.getEmail())) {
+        if (userService.existsByEmail(request.email())) {
             throw new AuthException("Email already in use");
         }
 
         User user = User.builder()
-                .username(request.getEmail())
-                .email(request.getEmail())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .firstName(request.getFirstName())
-                .lastName(request.getLastName())
+                .username(request.email())
+                .email(request.email())
+                .password(passwordEncoder.encode(request.password()))
+                .firstName(request.firstName())
+                .lastName(request.lastName())
                 .active(true)
                 .createdAt(Instant.now()).build();
 
@@ -47,9 +47,9 @@ public class AuthService {
     }
 
     public LoginResponse login(LoginRequest request) {
-        User user = userService.findUserByEmail(request.getEmail());
+        User user = userService.findUserByEmail(request.email());
 
-        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+        if (!passwordEncoder.matches(request.password(), user.getPassword())) {
             throw new AuthException("Invalid password");
         }
 

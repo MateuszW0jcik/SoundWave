@@ -3,9 +3,11 @@ package org.example.soundwave.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.soundwave.model.dto.AddressDTO;
+import org.example.soundwave.model.dto.ContactDTO;
 import org.example.soundwave.model.entity.Address;
 import org.example.soundwave.model.entity.User;
 import org.example.soundwave.model.exception.AddressException;
+import org.example.soundwave.model.request.AddressRequest;
 import org.example.soundwave.repository.AddressRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,20 +20,17 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AddressService {
     private final AddressRepository addressRepository;
-    private final UserService userService;
 
-    public void addAddress(AddressDTO request, User user) {
+    public void addAddress(AddressRequest request, User user) {
         Address address = Address.builder()
-                .country(request.getCountry())
-                .postalCode(request.getPostalCode())
-                .city(request.getCity())
-                .street(request.getStreet())
-                .streetNumber(request.getStreetNumber()).build();
+                .country(request.country())
+                .postalCode(request.postalCode())
+                .city(request.city())
+                .street(request.street())
+                .streetNumber(request.streetNumber())
+                .user(user).build();
 
         saveAddress(address);
-
-        user.addAddress(address);
-        userService.saveUser(user);
     }
 
     public void saveAddress(Address address){
@@ -46,7 +45,7 @@ public class AddressService {
     public void deleteUserAddress(Long id, User user) {
         Address address = findAddressById(id);
 
-        if(!user.getAddresses().contains(address)){
+        if(!address.getUser().equals(user)){
             throw new AddressException("User do not contains this address");
         }
 
@@ -57,24 +56,25 @@ public class AddressService {
         addressRepository.delete(address);
     }
 
-    public void editUserAddress(Long id, AddressDTO request, User user) {
+    public void editUserAddress(Long id, AddressRequest request, User user) {
         Address address = findAddressById(id);
 
-        if(!user.getAddresses().contains(address)){
+        if(!address.getUser().equals(user)){
             throw new AddressException("User do not contains this address");
         }
 
-        address.setCountry(request.getCountry());
-        address.setPostalCode(request.getPostalCode());
-        address.setCity(request.getCity());
-        address.setStreet(request.getStreet());
-        address.setStreetNumber(request.getStreetNumber());
+        address.setCountry(request.country());
+        address.setPostalCode(request.postalCode());
+        address.setCity(request.city());
+        address.setStreet(request.street());
+        address.setStreetNumber(request.streetNumber());
 
         saveAddress(address);
     }
 
     public List<AddressDTO> getUserAddresses(User user) {
-        return user.getAddresses().stream()
+        return addressRepository.findAddressByUser(user)
+                .stream()
                 .map(AddressDTO::new)
                 .collect(Collectors.toList());
     }

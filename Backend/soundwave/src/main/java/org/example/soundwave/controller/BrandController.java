@@ -3,8 +3,10 @@ package org.example.soundwave.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.soundwave.model.dto.BrandDTO;
+import org.example.soundwave.model.request.BrandRequest;
 import org.example.soundwave.service.BrandService;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
@@ -19,14 +21,14 @@ public class BrandController {
 
     @PostMapping("/add")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> addBrand(@Valid @RequestBody BrandDTO request) {
+    public ResponseEntity<?> addBrand(@Valid @RequestBody BrandRequest request) {
         brandService.addBrand(request);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> editBrand(@PathVariable Long id, @Valid @RequestBody BrandDTO request) {
+    public ResponseEntity<?> editBrand(@PathVariable Long id, @Valid @RequestBody BrandRequest request) {
         brandService.editBrand(id, request);
         return ResponseEntity.ok().build();
     }
@@ -40,6 +42,9 @@ public class BrandController {
 
     @GetMapping
     public ResponseEntity<Page<BrandDTO>> getBrands(@PageableDefault(size = 20) Pageable pageable) {
+        if (pageable.getSort().isUnsorted() || pageable.getSort().toString().equals("[]")) {
+            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
+        }
         return ResponseEntity.ok(brandService.getBrands(pageable));
     }
 }

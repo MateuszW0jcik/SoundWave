@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.example.soundwave.model.dto.BrandDTO;
 import org.example.soundwave.model.entity.Brand;
 import org.example.soundwave.model.exception.BrandException;
+import org.example.soundwave.model.request.BrandRequest;
 import org.example.soundwave.repository.BrandRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,22 +15,22 @@ import org.springframework.stereotype.Service;
 public class BrandService {
     private final BrandRepository brandRepository;
 
-    public void addBrand(BrandDTO brandDTO) {
-        if (brandRepository.existsBrandByName(brandDTO.getBrandName())) {
-            throw new BrandException("Brand with name: " + brandDTO.getBrandName() + " already exist");
+    public void addBrand(BrandRequest request) {
+        if (brandRepository.existsBrandByName(request.brandName())) {
+            throw new BrandException("Brand with name: " + request.brandName() + " already exist");
         }
 
         Brand brand = Brand.builder()
-                .name(brandDTO.getBrandName()).build();
+                .name(request.brandName()).build();
 
         brandRepository.save(brand);
     }
 
-    public void editBrand(Long id, BrandDTO request) {
+    public void editBrand(Long id, BrandRequest request) {
         Brand brand = brandRepository.findById(id)
                 .orElseThrow(() -> new BrandException("Brand with id: " + id + " do not exist"));
 
-        brand.setName(request.getBrandName());
+        brand.setName(request.brandName());
 
         brandRepository.save(brand);
     }

@@ -7,6 +7,7 @@ import org.example.soundwave.model.entity.Product;
 import org.example.soundwave.model.entity.User;
 import org.example.soundwave.model.exception.MessageException;
 import org.example.soundwave.model.exception.ProductException;
+import org.example.soundwave.model.request.MessageRequest;
 import org.example.soundwave.repository.MessageRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -19,28 +20,28 @@ public class MessageService {
     private final MessageRepository messageRepository;
     private final UserService userService;
 
-    public void createMessage(MessageDTO request, UserDetails userDetails) {
+    public void createMessage(MessageRequest request, UserDetails userDetails) {
         if (userDetails != null && userService.existsByUsername(userDetails.getUsername())) {
             User user = userService.findUserByUsername(userDetails.getUsername());
             if (exitsMessageByUser(user)) {
                 throw new MessageException("Your last message is still waiting for the administrator to review it.");
             }
             Message message = Message.builder()
-                    .content(request.getContent())
+                    .content(request.content())
                     .user(user)
                     .sentAt(Instant.now()).build();
             saveMessage(message);
         } else {
-            if (exitsMessageByEmail(request.getEmail())) {
+            if (exitsMessageByEmail(request.email())) {
                 throw new MessageException("Your last message is still waiting for the administrator to review it.");
             }
-            if (request.getEmail().isEmpty() || request.getName().isEmpty()){
+            if (request.email().isEmpty() || request.name().isEmpty()){
                 throw new MessageException("Invalid name or email.");
             }
             Message message = Message.builder()
-                    .content(request.getContent())
-                    .name(request.getName())
-                    .email(request.getEmail())
+                    .content(request.content())
+                    .name(request.name())
+                    .email(request.email())
                     .sentAt(Instant.now()).build();
             saveMessage(message);
         }

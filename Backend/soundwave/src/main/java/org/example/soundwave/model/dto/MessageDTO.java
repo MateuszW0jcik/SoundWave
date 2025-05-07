@@ -1,20 +1,17 @@
 package org.example.soundwave.model.dto;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import lombok.Data;
+import lombok.*;
 
 import java.time.Instant;
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class MessageDTO {
-    @NotBlank(message = "Content can't be empty")
+    private Long id;
     private String content;
-
     private String name;
-
-    @Email(message = "Email should be valid")
     private String email;
-
     private Instant sentAt;
 }

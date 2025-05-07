@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.soundwave.model.dto.ContactDTO;
 import org.example.soundwave.model.entity.User;
+import org.example.soundwave.model.request.ContactRequest;
 import org.example.soundwave.service.ContactService;
 import org.example.soundwave.service.UserService;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +22,7 @@ public class ContactController {
     private final UserService userService;
 
     @PostMapping("/add")
-    public ResponseEntity<?> addContact(@Valid @RequestBody ContactDTO request,
+    public ResponseEntity<?> addContact(@Valid @RequestBody ContactRequest request,
                                         @AuthenticationPrincipal UserDetails userDetails) {
         User user = userService.findUserByUsername(userDetails.getUsername());
         contactService.addContact(request, user);
@@ -38,7 +39,7 @@ public class ContactController {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> editUserContact(@PathVariable Long id,
-                                             @Valid @RequestBody ContactDTO request,
+                                             @Valid @RequestBody ContactRequest request,
                                              @AuthenticationPrincipal UserDetails userDetails) {
         User user = userService.findUserByUsername(userDetails.getUsername());
         contactService.editUserContact(id, request, user);

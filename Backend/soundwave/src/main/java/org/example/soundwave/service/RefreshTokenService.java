@@ -1,5 +1,6 @@
 package org.example.soundwave.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.example.soundwave.model.dto.TokenPair;
 import org.example.soundwave.model.entity.RefreshToken;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -31,15 +33,21 @@ public class RefreshTokenService {
     }
 
     public RefreshToken createRefreshToken(User user) {
-        refreshTokenRepository.deleteByUser(user);
-
-        return refreshTokenRepository.save(
-                RefreshToken.builder()
-                        .user(user)
-                        .token(UUID.randomUUID().toString())
-                        .expiryDate(Instant.now().plusMillis(refreshTokenDurationMs))
-                        .build()
-        );
+        Optional<RefreshToken> refreshToken = findRefreshTokenByUser(user);
+        if (refreshToken.isPresent()) {
+            RefreshToken refreshToken1 = refreshToken.get();
+            refreshToken1.setToken(UUID.randomUUID().toString());
+            refreshToken1.setExpiryDate(Instant.now().plusMillis(refreshTokenDurationMs));
+            return saveRefreshToken(refreshToken1);
+        } else {
+            return refreshTokenRepository.save(
+                    RefreshToken.builder()
+                            .user(user)
+                            .token(UUID.randomUUID().toString())
+                            .expiryDate(Instant.now().plusMillis(refreshTokenDurationMs))
+                            .build()
+            );
+        }
     }
 
     public TokenPair refreshAuthTokens(String refreshToken) {
@@ -52,5 +60,13 @@ public class RefreshTokenService {
         RefreshToken newRefreshToken = createRefreshToken(user);
 
         return new TokenPair(newAccessToken, newRefreshToken.getToken());
+    }
+
+    public Optional<RefreshToken> findRefreshTokenByUser(User user) {
+        return refreshTokenRepository.findRefreshTokenByUser(user);
+    }
+
+    public RefreshToken saveRefreshToken(RefreshToken refreshToken) {
+        return refreshTokenRepository.save(refreshToken);
     }
 }

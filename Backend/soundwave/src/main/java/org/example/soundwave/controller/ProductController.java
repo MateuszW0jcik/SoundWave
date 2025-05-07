@@ -3,8 +3,12 @@ package org.example.soundwave.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.soundwave.model.dto.ProductDTO;
+import org.example.soundwave.model.entity.Type;
+import org.example.soundwave.model.request.ProductRequest;
+import org.example.soundwave.model.response.PageResponse;
 import org.example.soundwave.service.ProductService;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
@@ -19,14 +23,15 @@ public class ProductController {
 
     @PostMapping("/add")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> addProduct(@Valid @RequestBody ProductDTO request) {
+    public ResponseEntity<?> addProduct(@Valid @RequestBody ProductRequest request) {
         productService.addProduct(request);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> editProduct(@PathVariable Long id, @Valid @RequestBody ProductDTO request) {
+    public ResponseEntity<?> editProduct(@PathVariable Long id,
+                                         @Valid @RequestBody ProductRequest request) {
         productService.editProduct(id, request);
         return ResponseEntity.ok().build();
     }
@@ -38,8 +43,15 @@ public class ProductController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping
-    public ResponseEntity<Page<ProductDTO>> getProducts(@PageableDefault(size = 20) Pageable pageable) {
-        return ResponseEntity.ok(productService.getProducts(pageable));
+    @GetMapping("/products")
+    public ResponseEntity<PageResponse<ProductDTO>> getProducts(
+            @RequestParam(value = "page", defaultValue = "0", required = false) int page,
+            @RequestParam(value = "size", defaultValue = "10", required = false) int size,
+            @RequestParam(value = "sortBy", defaultValue = "id", required = false) String sortBy,
+            @RequestParam(value = "sortDir", defaultValue = "asc", required = false) String sortDir,
+            @RequestParam(value = "type", required = false) Type type,
+            @RequestParam(value = "brandId", required = false) Long brandId,
+            @RequestParam(value = "wireless", required = false) Boolean wireless) {
+        return ResponseEntity.ok(productService.getAllProducts(page, size, sortBy, sortDir, type, brandId, wireless));
     }
 }

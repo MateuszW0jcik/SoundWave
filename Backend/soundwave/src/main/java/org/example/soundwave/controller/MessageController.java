@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.soundwave.model.dto.ContactDTO;
 import org.example.soundwave.model.dto.MessageDTO;
 import org.example.soundwave.model.entity.User;
+import org.example.soundwave.model.request.MessageRequest;
 import org.example.soundwave.service.MessageService;
 import org.example.soundwave.service.UserService;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +21,7 @@ public class MessageController {
     private final MessageService messageService;
 
     @PostMapping("/create")
-    public ResponseEntity<?> createMessage(@Valid @RequestBody MessageDTO request,
+    public ResponseEntity<?> createMessage(@Valid @RequestBody MessageRequest request,
                                            @AuthenticationPrincipal UserDetails userDetails) {
         messageService.createMessage(request, userDetails);
         return ResponseEntity.noContent().build();

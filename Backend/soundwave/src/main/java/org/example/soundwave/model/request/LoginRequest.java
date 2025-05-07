@@ -4,12 +4,11 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
-@Data
-public class LoginRequest {
+public record LoginRequest (
     @NotBlank(message = "Email can't be empty")
     @Email(message = "Incorrect email format")
-    private String email;
+    String email,
 
     @NotBlank(message = "Password can't be empty")
-    private String password;
-}
+    String password
+){}

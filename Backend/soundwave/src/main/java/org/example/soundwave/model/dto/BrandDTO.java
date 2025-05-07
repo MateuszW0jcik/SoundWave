@@ -1,16 +1,18 @@
 package org.example.soundwave.model.dto;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
-import lombok.Data;
+import lombok.*;
 import org.example.soundwave.model.entity.Brand;
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class BrandDTO {
-    @NotBlank(message = "Name can't be empty")
+    private Long id;
     private String brandName;
 
     public BrandDTO(Brand brand) {
+        id = brand.getId();
         brandName = brand.getName();
     }
 }

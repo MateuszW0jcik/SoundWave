@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.soundwave.model.dto.AddressDTO;
 import org.example.soundwave.model.entity.User;
+import org.example.soundwave.model.request.AddressRequest;
 import org.example.soundwave.service.AddressService;
 import org.example.soundwave.service.UserService;
 import org.springframework.data.domain.Page;
@@ -25,7 +26,7 @@ public class AddressController {
     private final UserService userService;
 
     @PostMapping("/add")
-    public ResponseEntity<?> addAddress(@Valid @RequestBody AddressDTO request,
+    public ResponseEntity<?> addAddress(@Valid @RequestBody AddressRequest request,
                                         @AuthenticationPrincipal UserDetails userDetails) {
         User user = userService.findUserByUsername(userDetails.getUsername());
         addressService.addAddress(request, user);
@@ -42,7 +43,7 @@ public class AddressController {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> editUserAddress(@PathVariable Long id,
-                                         @Valid @RequestBody AddressDTO request,
+                                         @Valid @RequestBody AddressRequest request,
                                          @AuthenticationPrincipal UserDetails userDetails) {
         User user = userService.findUserByUsername(userDetails.getUsername());
         addressService.editUserAddress(id, request, user);

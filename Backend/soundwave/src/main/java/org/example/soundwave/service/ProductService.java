@@ -4,13 +4,20 @@ import lombok.AllArgsConstructor;
 import org.example.soundwave.model.entity.Brand;
 import org.example.soundwave.model.entity.Product;
 import org.example.soundwave.model.dto.ProductDTO;
+import org.example.soundwave.model.entity.Type;
 import org.example.soundwave.model.exception.ProductException;
+import org.example.soundwave.model.request.ProductRequest;
+import org.example.soundwave.model.response.PageResponse;
 import org.example.soundwave.repository.ProductRepository;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -18,37 +25,37 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final BrandService brandService;
 
-    public void addProduct(ProductDTO request) {
+    public void addProduct(ProductRequest request) {
         Product product = Product.builder()
-                .name(request.getName())
-                .price(request.getPrice())
-                .description(request.getDescription())
-                .quantity(request.getQuantity())
-                .wireless(request.getWireless())
-                .type(request.getType())
-                .imageURL(request.getImageURL())
+                .name(request.name())
+                .price(request.price())
+                .description(request.description())
+                .quantity(request.quantity())
+                .wireless(request.wireless())
+                .type(request.type())
+                .imageURL(request.imageURL())
                 .addedAt(Instant.now()).build();
 
-        Brand brand = brandService.findBrandByName(request.getBrandName());
+        Brand brand = brandService.findBrandByName(request.brand().brandName());
 
         product.setBrand(brand);
 
         productRepository.save(product);
     }
 
-    public void editProduct(Long id, ProductDTO request) {
+    public void editProduct(Long id, ProductRequest request) {
         Product product = findProductById(id);
 
-        Brand brand = brandService.findBrandByName(request.getBrandName());
+        Brand brand = brandService.findBrandByName(request.brand().brandName());
 
-        product.setName(request.getName());
-        product.setType(request.getType());
+        product.setName(request.name());
+        product.setType(request.type());
         product.setBrand(brand);
-        product.setImageURL(request.getImageURL());
-        product.setDescription(request.getDescription());
-        product.setWireless(request.getWireless());
-        product.setPrice(request.getPrice());
-        product.setQuantity(request.getQuantity());
+        product.setImageURL(request.imageURL());
+        product.setDescription(request.description());
+        product.setWireless(request.wireless());
+        product.setPrice(request.price());
+        product.setQuantity(request.quantity());
 
         productRepository.save(product);
     }
@@ -64,8 +71,44 @@ public class ProductService {
                 .orElseThrow(() -> new ProductException("Product with id: " + id + " do not exist"));
     }
 
-    public Page<ProductDTO> getProducts(Pageable pageable) {
-        return productRepository.findAll(pageable)
-                .map(ProductDTO::new);
+    public PageResponse<ProductDTO> getAllProducts(int pageNo, int pageSize, String sortBy, String sortDir,
+                                                   Type type, Long brandId, Boolean wireless) {
+
+        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ?
+                Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+
+        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+        Page<Product> products;
+
+        if (type != null && brandId != null && wireless != null) {
+            products = productRepository.findByTypeAndBrandIdAndWireless(type, brandId, wireless, pageable);
+        } else if (type != null && brandId != null) {
+            products = productRepository.findByTypeAndBrandId(type, brandId, pageable);
+        } else if (type != null && wireless != null) {
+            products = productRepository.findByTypeAndWireless(type, wireless, pageable);
+        } else if (brandId != null && wireless != null) {
+            products = productRepository.findByBrandIdAndWireless(brandId, wireless, pageable);
+        } else if (type != null) {
+            products = productRepository.findByType(type, pageable);
+        } else if (brandId != null) {
+            products = productRepository.findByBrandId(brandId, pageable);
+        } else if (wireless != null) {
+            products = productRepository.findByWireless(wireless, pageable);
+        } else {
+            products = productRepository.findAll(pageable);
+        }
+
+        List<ProductDTO> content = products.getContent()
+                .stream()
+                .map(ProductDTO::new)
+                .collect(Collectors.toList());
+
+        return new PageResponse<>(
+                content,
+                products.getNumber(),
+                products.getSize(),
+                products.getTotalElements(),
+                products.getTotalPages(),
+                products.isLast());
     }
 }
