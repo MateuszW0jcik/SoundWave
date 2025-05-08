@@ -69,6 +69,8 @@ public class User {
         roles.add(role);
     }
 
+    public void removeRole(Role role) {roles.remove(role);}
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

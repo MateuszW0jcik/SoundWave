@@ -53,7 +53,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(auth);
             }
             filterChain.doFilter(request, response);
-        } catch (UsernameNotFoundException ex) {
+        } catch (UsernameNotFoundException | AuthException ex) {
             log.warn("JWT authentication failed: {}", ex.getMessage());
             ErrorResponse error = new ErrorResponse("AUTH_ERROR", "JWT authentication failed");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
