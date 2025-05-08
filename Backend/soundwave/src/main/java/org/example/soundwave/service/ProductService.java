@@ -80,40 +80,24 @@ public class ProductService {
         Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
         Page<Product> products;
 
-        boolean hasName = name != null && !name.trim().isEmpty();
+        name = name.trim();
 
-        if (hasName && type != null && brandId != null && wireless != null) {
+        if (type != null && brandId != null && wireless != null) {
             products = productRepository.findByNameContainingIgnoreCaseAndTypeAndBrandIdAndWireless(name, type, brandId, wireless, pageable);
-        } else if (hasName && type != null && brandId != null) {
-            products = productRepository.findByNameContainingIgnoreCaseAndTypeAndBrandId(name, type, brandId, pageable);
-        } else if (hasName && type != null && wireless != null) {
-            products = productRepository.findByNameContainingIgnoreCaseAndTypeAndWireless(name, type, wireless, pageable);
-        } else if (hasName && brandId != null && wireless != null) {
-            products = productRepository.findByNameContainingIgnoreCaseAndBrandIdAndWireless(name, brandId, wireless, pageable);
-        } else if (hasName && type != null) {
-            products = productRepository.findByNameContainingIgnoreCaseAndType(name, type, pageable);
-        } else if (hasName && brandId != null) {
-            products = productRepository.findByNameContainingIgnoreCaseAndBrandId(name, brandId, pageable);
-        } else if (hasName && wireless != null) {
-            products = productRepository.findByNameContainingIgnoreCaseAndWireless(name, wireless, pageable);
-        } else if (hasName) {
-            products = productRepository.findByNameContainingIgnoreCase(name, pageable);
-        } else if (type != null && brandId != null && wireless != null) {
-            products = productRepository.findByTypeAndBrandIdAndWireless(type, brandId, wireless, pageable);
         } else if (type != null && brandId != null) {
-            products = productRepository.findByTypeAndBrandId(type, brandId, pageable);
+            products = productRepository.findByNameContainingIgnoreCaseAndTypeAndBrandId(name, type, brandId, pageable);
         } else if (type != null && wireless != null) {
-            products = productRepository.findByTypeAndWireless(type, wireless, pageable);
+            products = productRepository.findByNameContainingIgnoreCaseAndTypeAndWireless(name, type, wireless, pageable);
         } else if (brandId != null && wireless != null) {
-            products = productRepository.findByBrandIdAndWireless(brandId, wireless, pageable);
+            products = productRepository.findByNameContainingIgnoreCaseAndBrandIdAndWireless(name, brandId, wireless, pageable);
         } else if (type != null) {
-            products = productRepository.findByType(type, pageable);
+            products = productRepository.findByNameContainingIgnoreCaseAndType(name, type, pageable);
         } else if (brandId != null) {
-            products = productRepository.findByBrandId(brandId, pageable);
+            products = productRepository.findByNameContainingIgnoreCaseAndBrandId(name, brandId, pageable);
         } else if (wireless != null) {
-            products = productRepository.findByWireless(wireless, pageable);
+            products = productRepository.findByNameContainingIgnoreCaseAndWireless(name, wireless, pageable);
         } else {
-            products = productRepository.findAll(pageable);
+            products = productRepository.findByNameContainingIgnoreCase(name, pageable);
         }
 
         List<ProductDTO> content = products.getContent()
