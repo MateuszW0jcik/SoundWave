@@ -90,8 +90,20 @@ public class UserService {
     }
 
     public PageResponse<UserAdminOnlyDTO> getUsers(int pageNo, int pageSize, String sortBy, String sortDir, String name) {
-        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ?
-                Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Sort sort;
+
+        if (sortBy.equalsIgnoreCase("name")) {
+            Sort.Order firstNameOrder = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name())
+                    ? Sort.Order.asc("firstName").ignoreCase()
+                    : Sort.Order.desc("firstName").ignoreCase();
+            Sort.Order lastNameOrder = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name())
+                    ? Sort.Order.asc("lastName").ignoreCase()
+                    : Sort.Order.desc("lastName").ignoreCase();
+            sort = Sort.by(lastNameOrder).and(Sort.by(firstNameOrder));
+        } else {
+            sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ?
+                    Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        }
 
         Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
         Page<User> users;

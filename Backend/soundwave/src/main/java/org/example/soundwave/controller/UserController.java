@@ -36,7 +36,7 @@ public class UserController {
     public ResponseEntity<PageResponse<UserAdminOnlyDTO>> getUsers(
             @RequestParam(value = "page", defaultValue = "0", required = false) int page,
             @RequestParam(value = "size", defaultValue = "10", required = false) int size,
-            @RequestParam(value = "sortBy", defaultValue = "id", required = false) String sortBy,
+            @RequestParam(value = "sortBy", defaultValue = "name", required = false) String sortBy,
             @RequestParam(value = "sortDir", defaultValue = "asc", required = false) String sortDir,
             @RequestParam(value = "name", defaultValue = "", required = false) String name) {
         return ResponseEntity.ok(userService.getUsers(page, size, sortBy, sortDir, name));
