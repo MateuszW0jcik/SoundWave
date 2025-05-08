@@ -21,7 +21,7 @@ public record ProductRequest(
         String description,
         @NotNull(message = "Wireless can't be null")
         Boolean wireless,
-        @NotBlank(message = "Price can't be empty")
+        @NotNull(message = "Price can't be null")
         @DecimalMin(value = "0.0", inclusive = false, message = "Price must be greater than 0")
         BigDecimal price,
         @NotNull(message = "Quantity can't be null")

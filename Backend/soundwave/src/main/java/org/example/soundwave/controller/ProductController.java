@@ -30,10 +30,11 @@ public class ProductController {
             @RequestParam(value = "size", defaultValue = "10", required = false) int size,
             @RequestParam(value = "sortBy", defaultValue = "id", required = false) String sortBy,
             @RequestParam(value = "sortDir", defaultValue = "asc", required = false) String sortDir,
+            @RequestParam(value = "name", defaultValue = "", required = false) String name,
             @RequestParam(value = "type", required = false) Type type,
             @RequestParam(value = "brandId", required = false) Long brandId,
             @RequestParam(value = "wireless", required = false) Boolean wireless) {
-        return ResponseEntity.ok(productService.getProducts(page, size, sortBy, sortDir, type, brandId, wireless));
+        return ResponseEntity.ok(productService.getProducts(page, size, sortBy, sortDir, name, type, brandId, wireless));
     }
 
     @PostMapping("/add")

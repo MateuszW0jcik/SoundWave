@@ -72,7 +72,7 @@ public class ProductService {
     }
 
     public PageResponse<ProductDTO> getProducts(int pageNo, int pageSize, String sortBy, String sortDir,
-                                                   Type type, Long brandId, Boolean wireless) {
+                                                   String name, Type type, Long brandId, Boolean wireless) {
 
         Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ?
                 Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
@@ -80,7 +80,25 @@ public class ProductService {
         Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
         Page<Product> products;
 
-        if (type != null && brandId != null && wireless != null) {
+        boolean hasName = name != null && !name.trim().isEmpty();
+
+        if (hasName && type != null && brandId != null && wireless != null) {
+            products = productRepository.findByNameContainingIgnoreCaseAndTypeAndBrandIdAndWireless(name, type, brandId, wireless, pageable);
+        } else if (hasName && type != null && brandId != null) {
+            products = productRepository.findByNameContainingIgnoreCaseAndTypeAndBrandId(name, type, brandId, pageable);
+        } else if (hasName && type != null && wireless != null) {
+            products = productRepository.findByNameContainingIgnoreCaseAndTypeAndWireless(name, type, wireless, pageable);
+        } else if (hasName && brandId != null && wireless != null) {
+            products = productRepository.findByNameContainingIgnoreCaseAndBrandIdAndWireless(name, brandId, wireless, pageable);
+        } else if (hasName && type != null) {
+            products = productRepository.findByNameContainingIgnoreCaseAndType(name, type, pageable);
+        } else if (hasName && brandId != null) {
+            products = productRepository.findByNameContainingIgnoreCaseAndBrandId(name, brandId, pageable);
+        } else if (hasName && wireless != null) {
+            products = productRepository.findByNameContainingIgnoreCaseAndWireless(name, wireless, pageable);
+        } else if (hasName) {
+            products = productRepository.findByNameContainingIgnoreCase(name, pageable);
+        } else if (type != null && brandId != null && wireless != null) {
             products = productRepository.findByTypeAndBrandIdAndWireless(type, brandId, wireless, pageable);
         } else if (type != null && brandId != null) {
             products = productRepository.findByTypeAndBrandId(type, brandId, pageable);

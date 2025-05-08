@@ -27,4 +27,20 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     Page<Product> findByBrandIdAndWireless(Long brandId, Boolean wireless, Pageable pageable);
 
     Page<Product> findByTypeAndBrandIdAndWireless(Type type, Long brandId, Boolean wireless, Pageable pageable);
+
+    Page<Product> findByNameContainingIgnoreCaseAndTypeAndBrandIdAndWireless(String name, Type type, Long brandId, Boolean wireless, Pageable pageable);
+
+    Page<Product> findByNameContainingIgnoreCaseAndTypeAndBrandId(String name, Type type, Long brandId, Pageable pageable);
+
+    Page<Product> findByNameContainingIgnoreCaseAndTypeAndWireless(String name, Type type, Boolean wireless, Pageable pageable);
+
+    Page<Product> findByNameContainingIgnoreCaseAndBrandIdAndWireless(String name, Long brandId, Boolean wireless, Pageable pageable);
+
+    Page<Product> findByNameContainingIgnoreCaseAndType(String name, Type type, Pageable pageable);
+
+    Page<Product> findByNameContainingIgnoreCaseAndBrandId(String name, Long brandId, Pageable pageable);
+
+    Page<Product> findByNameContainingIgnoreCaseAndWireless(String name, Boolean wireless, Pageable pageable);
+
+    Page<Product> findByNameContainingIgnoreCase(String name, Pageable pageable);
 }
