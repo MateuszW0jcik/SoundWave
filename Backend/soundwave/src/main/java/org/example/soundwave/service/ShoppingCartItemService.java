@@ -19,11 +19,15 @@ public class ShoppingCartItemService {
     private final ShoppingCartItemRepository shoppingCartItemRepository;
     private final ProductService productService;
 
-    public List<ShoppingCartItemDTO> getUserShoppingCartItems(User user) {
+    public List<ShoppingCartItemDTO> getUserShoppingCartItemsDTO(User user) {
         return shoppingCartItemRepository.findShoppingCartItemsByUser(user)
                 .stream()
                 .map(ShoppingCartItemDTO::new)
                 .collect(Collectors.toList());
+    }
+
+    public List<ShoppingCartItem> getUserShoppingCartItems(User user) {
+        return shoppingCartItemRepository.findShoppingCartItemsByUser(user);
     }
 
     public void addUserShoppingCartItem(ShoppingCartItemRequest request, User user) {
@@ -73,5 +77,12 @@ public class ShoppingCartItemService {
 
     public void saveShoppingCartItem(ShoppingCartItem shoppingCartItem) {
         shoppingCartItemRepository.save(shoppingCartItem);
+    }
+
+    public void clearUserShoppingCart(User user) {
+        List<ShoppingCartItem> shoppingCartItems = getUserShoppingCartItems(user);
+        for(ShoppingCartItem shoppingCartItem : shoppingCartItems){
+            deleteShoppingCartItem(shoppingCartItem);
+        }
     }
 }

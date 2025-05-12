@@ -27,7 +27,7 @@ public class ShoppingCartItemController {
     public ResponseEntity<List<ShoppingCartItemDTO>> getUserShoppingCartItems(
             @AuthenticationPrincipal UserDetails userDetails) {
         User user = userService.findUserByUsername(userDetails.getUsername());
-        return ResponseEntity.ok(shoppingCartItemService.getUserShoppingCartItems(user));
+        return ResponseEntity.ok(shoppingCartItemService.getUserShoppingCartItemsDTO(user));
     }
 
     @PostMapping("/add")

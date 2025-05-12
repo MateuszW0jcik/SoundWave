@@ -27,7 +27,7 @@ public class OrderedItem {
 
     private BigDecimal price;
 
-    private Integer quantity;
+    private Long quantity;
 
     private String imageURL;
 }
