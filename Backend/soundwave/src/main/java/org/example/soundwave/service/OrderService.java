@@ -25,7 +25,7 @@ public class OrderService {
     private final PaymentService paymentService;
     private final ShoppingCartItemService shoppingCartItemService;
     private final OrderedItemService orderedItemService;
-
+    private final ShippingMethodService shippingMethodService;
 
     public List<OrderDTO> getUserOrders(User user) {
         return getOrdersByUser(user)
@@ -73,7 +73,9 @@ public class OrderService {
             throw new ContactException("User do not have shopping cart");
         }
 
-        BigDecimal totalPrice = getTotalPrice(request, shoppingCartItems);
+        ShippingMethod shippingMethod = shippingMethodService.findShippingMethodById(request.shippingMethodId());
+
+        BigDecimal totalPrice = getTotalPrice(shippingMethod.getPrice(), shoppingCartItems);
 
         Order order = Order.builder()
                 .user(user)
@@ -105,18 +107,13 @@ public class OrderService {
         shoppingCartItemService.clearUserShoppingCart(user);
     }
 
-    private static BigDecimal getTotalPrice(OrderRequest request, List<ShoppingCartItem> shoppingCartItems) {
+    private static BigDecimal getTotalPrice(BigDecimal shippingPrice, List<ShoppingCartItem> shoppingCartItems) {
         BigDecimal totalPrice = BigDecimal.valueOf(0);
         for (ShoppingCartItem shoppingCartItem : shoppingCartItems) {
             totalPrice = totalPrice.add(BigDecimal.valueOf(shoppingCartItem.getQuantity()).multiply(shoppingCartItem.getProduct().getPrice()));
         }
 
-        switch (request.shippingMethod()){
-            case FREE -> totalPrice = totalPrice.add(BigDecimal.valueOf(0));
-            case EXPRESS -> totalPrice = totalPrice.add(BigDecimal.valueOf(1));
-            case REGULAR -> totalPrice = totalPrice.add(BigDecimal.valueOf(2));
-        }
-        return totalPrice;
+        return totalPrice.add(shippingPrice);
     }
 
     public void saveOrder(Order order) {

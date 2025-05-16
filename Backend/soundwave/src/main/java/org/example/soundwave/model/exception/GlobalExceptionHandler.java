@@ -85,4 +85,11 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorResponse("ORDER_ERROR", ex.getMessage()));
     }
+
+    @ExceptionHandler(ShippingMethodException.class)
+    public ResponseEntity<ErrorResponse> handleOrderException(ShippingMethodException ex) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponse("SHIPPING_METHOD_ERROR", ex.getMessage()));
+    }
 }
