@@ -13,6 +13,7 @@ import org.example.soundwave.model.request.ChangeUserLoginEmailRequest;
 import org.example.soundwave.model.request.ChangeUserPasswordRequest;
 import org.example.soundwave.model.request.ChangeUserStatusRequest;
 import org.example.soundwave.model.request.EditUserFullNameRequest;
+import org.example.soundwave.model.response.MeResponse;
 import org.example.soundwave.model.response.PageResponse;
 import org.example.soundwave.model.response.RefreshResponse;
 import org.example.soundwave.service.RefreshTokenService;
@@ -40,6 +41,12 @@ public class UserController {
             @RequestParam(value = "sortDir", defaultValue = "asc", required = false) String sortDir,
             @RequestParam(value = "name", defaultValue = "", required = false) String name) {
         return ResponseEntity.ok(userService.getUsers(page, size, sortBy, sortDir, name));
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<MeResponse> getMe(@AuthenticationPrincipal UserDetails userDetails){
+        User user = userService.findUserByUsername(userDetails.getUsername());
+        return ResponseEntity.ok(new MeResponse(user.getId(), user.getFirstName(), user.getLastName(), user.getEmail()));
     }
 
     @PutMapping("/status")
