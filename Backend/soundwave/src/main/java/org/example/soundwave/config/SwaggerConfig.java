@@ -28,14 +28,4 @@ public class SwaggerConfig implements WebMvcConfigurer {
                                 .bearerFormat("JWT")
                         ));
     }
-
-    @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/swagger-ui/swagger-dark-theme.css")
-                .addResourceLocations("classpath:/static/css/");
-        registry.addResourceHandler("/swagger-ui/swagger-custom.js")
-                .addResourceLocations("classpath:/static/js/");
-    }
-
-
 }
