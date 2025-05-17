@@ -9,6 +9,7 @@ import org.example.soundwave.model.dto.OrderDetailsDTO;
 import org.example.soundwave.model.entity.User;
 import org.example.soundwave.model.request.AddressRequest;
 import org.example.soundwave.model.request.OrderRequest;
+import org.example.soundwave.model.response.PageResponse;
 import org.example.soundwave.service.OrderService;
 import org.example.soundwave.service.UserService;
 import org.springframework.http.ResponseEntity;
@@ -27,9 +28,14 @@ public class OrderController {
     private final UserService userService;
 
     @GetMapping
-    public ResponseEntity<List<OrderDTO>> getUserOrders(@AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<PageResponse<OrderDTO>> getUserOrders(
+            @RequestParam(value = "page", defaultValue = "0", required = false) int page,
+            @RequestParam(value = "size", defaultValue = "10", required = false) int size,
+            @RequestParam(value = "sortBy", defaultValue = "id", required = false) String sortBy,
+            @RequestParam(value = "sortDir", defaultValue = "asc", required = false) String sortDir,
+            @AuthenticationPrincipal UserDetails userDetails) {
         User user = userService.findUserByUsername(userDetails.getUsername());
-        return ResponseEntity.ok(orderService.getUserOrders(user));
+        return ResponseEntity.ok(orderService.getUserOrders(user, page, size, sortBy, sortDir));
     }
 
     @GetMapping("/{id}/details")

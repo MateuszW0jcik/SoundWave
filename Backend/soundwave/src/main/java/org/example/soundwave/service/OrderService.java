@@ -1,6 +1,7 @@
 package org.example.soundwave.service;
 
 import lombok.RequiredArgsConstructor;
+import org.example.soundwave.model.dto.BrandDTO;
 import org.example.soundwave.model.dto.OrderDTO;
 import org.example.soundwave.model.dto.OrderDetailsDTO;
 import org.example.soundwave.model.dto.OrderedItemDTO;
@@ -8,7 +9,12 @@ import org.example.soundwave.model.entity.*;
 import org.example.soundwave.model.exception.ContactException;
 import org.example.soundwave.model.exception.OrderException;
 import org.example.soundwave.model.request.OrderRequest;
+import org.example.soundwave.model.response.PageResponse;
 import org.example.soundwave.repository.OrderRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -27,11 +33,25 @@ public class OrderService {
     private final OrderedItemService orderedItemService;
     private final ShippingMethodService shippingMethodService;
 
-    public List<OrderDTO> getUserOrders(User user) {
-        return getOrdersByUser(user)
+    public PageResponse<OrderDTO> getUserOrders(User user, int pageNo, int pageSize, String sortBy, String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ?
+                Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+
+        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+        Page<Order> orders = orderRepository.findOrdersByUser(user, pageable);
+
+        List<OrderDTO> content = orders.getContent()
                 .stream()
                 .map(OrderDTO::new)
                 .collect(Collectors.toList());
+
+        return new PageResponse<>(
+                content,
+                orders.getNumber(),
+                orders.getSize(),
+                orders.getTotalElements(),
+                orders.getTotalPages(),
+                orders.isLast());
     }
 
     public OrderDetailsDTO getUserOrderDetails(Long orderId, User user) {
@@ -123,9 +143,5 @@ public class OrderService {
     public Order getOrderById(Long id) {
         return orderRepository.findById(id)
                 .orElseThrow(() -> new OrderException("Order with id: " + id + " do not exist"));
-    }
-
-    public List<Order> getOrdersByUser(User user) {
-        return orderRepository.findOrdersByUser(user);
     }
 }
