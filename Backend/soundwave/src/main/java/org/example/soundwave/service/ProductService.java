@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 public class ProductService {
     private final ProductRepository productRepository;
     private final BrandService brandService;
+    private final TypeService typeService;
 
     public void addProduct(ProductRequest request) {
         Product product = Product.builder()
@@ -32,13 +33,15 @@ public class ProductService {
                 .description(request.description())
                 .quantity(request.quantity())
                 .wireless(request.wireless())
-                .type(request.type())
                 .imageURL(request.imageURL())
                 .addedAt(Instant.now()).build();
 
-        Brand brand = brandService.findBrandByName(request.brand().brandName());
+        Brand brand = brandService.findBrandById(request.brandId());
+
+        Type type = typeService.findTypeById(request.typeId());
 
         product.setBrand(brand);
+        product.setType(type);
 
         productRepository.save(product);
     }
@@ -46,10 +49,11 @@ public class ProductService {
     public void editProduct(Long id, ProductRequest request) {
         Product product = findProductById(id);
 
-        Brand brand = brandService.findBrandByName(request.brand().brandName());
+        Brand brand = brandService.findBrandById(request.brandId());
+        Type type = typeService.findTypeById(request.typeId());
 
         product.setName(request.name());
-        product.setType(request.type());
+        product.setType(type);
         product.setBrand(brand);
         product.setImageURL(request.imageURL());
         product.setDescription(request.description());
@@ -72,7 +76,7 @@ public class ProductService {
     }
 
     public PageResponse<ProductDTO> getProducts(int pageNo, int pageSize, String sortBy, String sortDir,
-                                                   String name, Type type, Long brandId, Boolean wireless) {
+                                                String name, Long typeId, Long brandId, Boolean wireless) {
 
         Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ?
                 Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
@@ -82,16 +86,16 @@ public class ProductService {
 
         name = name.trim();
 
-        if (type != null && brandId != null && wireless != null) {
-            products = productRepository.findByNameContainingIgnoreCaseAndTypeAndBrandIdAndWireless(name, type, brandId, wireless, pageable);
-        } else if (type != null && brandId != null) {
-            products = productRepository.findByNameContainingIgnoreCaseAndTypeAndBrandId(name, type, brandId, pageable);
-        } else if (type != null && wireless != null) {
-            products = productRepository.findByNameContainingIgnoreCaseAndTypeAndWireless(name, type, wireless, pageable);
+        if (typeId != null && brandId != null && wireless != null) {
+            products = productRepository.findByNameContainingIgnoreCaseAndTypeIdAndBrandIdAndWireless(name, typeId, brandId, wireless, pageable);
+        } else if (typeId != null && brandId != null) {
+            products = productRepository.findByNameContainingIgnoreCaseAndTypeIdAndBrandId(name, typeId, brandId, pageable);
+        } else if (typeId != null && wireless != null) {
+            products = productRepository.findByNameContainingIgnoreCaseAndTypeIdAndWireless(name, typeId, wireless, pageable);
         } else if (brandId != null && wireless != null) {
             products = productRepository.findByNameContainingIgnoreCaseAndBrandIdAndWireless(name, brandId, wireless, pageable);
-        } else if (type != null) {
-            products = productRepository.findByNameContainingIgnoreCaseAndType(name, type, pageable);
+        } else if (typeId != null) {
+            products = productRepository.findByNameContainingIgnoreCaseAndTypeId(name, typeId, pageable);
         } else if (brandId != null) {
             products = productRepository.findByNameContainingIgnoreCaseAndBrandId(name, brandId, pageable);
         } else if (wireless != null) {
@@ -112,5 +116,23 @@ public class ProductService {
                 products.getTotalElements(),
                 products.getTotalPages(),
                 products.isLast());
+    }
+
+    public List<ProductDTO> getNewProducts() {
+        List<Product> products = productRepository.findTop5ByOrderByAddedAtDesc();
+
+        return products
+                .stream()
+                .map(ProductDTO::new)
+                .collect(Collectors.toList());
+    }
+
+    public List<ProductDTO> getBestSellersProducts() {
+        List<Product> products = productRepository.findTop5ByOrderByAddedAtDesc();
+
+        return products
+                .stream()
+                .map(ProductDTO::new)
+                .collect(Collectors.toList());
     }
 }

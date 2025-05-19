@@ -24,12 +24,12 @@ public class BrandService {
     private final BrandRepository brandRepository;
 
     public void addBrand(BrandRequest request) {
-        if (brandRepository.existsBrandByName(request.brandName())) {
-            throw new BrandException("Brand with name: " + request.brandName() + " already exist");
+        if (brandRepository.existsBrandByName(request.name())) {
+            throw new BrandException("Brand with name: " + request.name() + " already exist");
         }
 
         Brand brand = Brand.builder()
-                .name(request.brandName()).build();
+                .name(request.name()).build();
 
         brandRepository.save(brand);
     }
@@ -38,7 +38,7 @@ public class BrandService {
         Brand brand = brandRepository.findById(id)
                 .orElseThrow(() -> new BrandException("Brand with id: " + id + " do not exist"));
 
-        brand.setName(request.brandName());
+        brand.setName(request.name());
 
         brandRepository.save(brand);
     }
@@ -53,6 +53,11 @@ public class BrandService {
     public Brand findBrandByName(String name){
         return brandRepository.findBrandByName(name)
                 .orElseThrow(() -> new BrandException("Brand with name: " + name + " do not exist"));
+    }
+
+    public Brand findBrandById(Long id) {
+        return brandRepository.findBrandById(id)
+                .orElseThrow(() -> new BrandException("Brand with id: " + id + " do not exist"));
     }
 
     public PageResponse<BrandDTO> getBrands(int pageNo, int pageSize, String sortBy, String sortDir) {

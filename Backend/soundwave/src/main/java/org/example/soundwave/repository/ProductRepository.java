@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -14,29 +15,19 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     Optional<Product> findProductByName(String name);
     boolean existsProductByName(String name);
 
-    Page<Product> findByType(Type type, Pageable pageable);
+    List<Product> findTop5ByOrderByAddedAtDesc();
 
-    Page<Product> findByBrandId(Long brandId, Pageable pageable);
+    List<Product> findTop5ByOrderByAddedAtAsc();
 
-    Page<Product> findByWireless(Boolean wireless, Pageable pageable);
+    Page<Product> findByNameContainingIgnoreCaseAndTypeIdAndBrandIdAndWireless(String name, Long typeId, Long brandId, Boolean wireless, Pageable pageable);
 
-    Page<Product> findByTypeAndBrandId(Type type, Long brandId, Pageable pageable);
+    Page<Product> findByNameContainingIgnoreCaseAndTypeIdAndBrandId(String name, Long typeId, Long brandId, Pageable pageable);
 
-    Page<Product> findByTypeAndWireless(Type type, Boolean wireless, Pageable pageable);
-
-    Page<Product> findByBrandIdAndWireless(Long brandId, Boolean wireless, Pageable pageable);
-
-    Page<Product> findByTypeAndBrandIdAndWireless(Type type, Long brandId, Boolean wireless, Pageable pageable);
-
-    Page<Product> findByNameContainingIgnoreCaseAndTypeAndBrandIdAndWireless(String name, Type type, Long brandId, Boolean wireless, Pageable pageable);
-
-    Page<Product> findByNameContainingIgnoreCaseAndTypeAndBrandId(String name, Type type, Long brandId, Pageable pageable);
-
-    Page<Product> findByNameContainingIgnoreCaseAndTypeAndWireless(String name, Type type, Boolean wireless, Pageable pageable);
+    Page<Product> findByNameContainingIgnoreCaseAndTypeIdAndWireless(String name, Long typeId, Boolean wireless, Pageable pageable);
 
     Page<Product> findByNameContainingIgnoreCaseAndBrandIdAndWireless(String name, Long brandId, Boolean wireless, Pageable pageable);
 
-    Page<Product> findByNameContainingIgnoreCaseAndType(String name, Type type, Pageable pageable);
+    Page<Product> findByNameContainingIgnoreCaseAndTypeId(String name, Long typeId, Pageable pageable);
 
     Page<Product> findByNameContainingIgnoreCaseAndBrandId(String name, Long brandId, Pageable pageable);
 

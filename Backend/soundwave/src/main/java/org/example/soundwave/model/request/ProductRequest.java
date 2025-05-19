@@ -12,9 +12,9 @@ public record ProductRequest(
         @NotBlank(message = "Name can't be empty")
         String name,
         @NotNull(message = "Type can't be null")
-        Type type,
+        Long typeId,
         @NotNull(message = "Brand can't be null")
-        BrandRequest brand,
+        Long brandId,
         @NotBlank(message = "Image URL can't be empty")
         String imageURL,
         @NotBlank(message = "Description can't be empty")

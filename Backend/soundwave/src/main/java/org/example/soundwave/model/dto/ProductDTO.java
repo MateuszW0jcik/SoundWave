@@ -18,7 +18,7 @@ import java.math.BigDecimal;
 public class ProductDTO {
     private Long id;
     private String name;
-    private Type type;
+    private String type;
     private String brandName;
     private String imageURL;
     private String description;
@@ -29,7 +29,7 @@ public class ProductDTO {
     public ProductDTO(Product product) {
         id = product.getId();
         name = product.getName();
-        type = product.getType();
+        type = product.getType().getName();
         brandName = product.getBrand().getName();
         imageURL = product.getImageURL();
         description = product.getDescription();

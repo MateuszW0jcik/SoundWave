@@ -1,21 +1,17 @@
 package org.example.soundwave.controller;
 
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.soundwave.model.dto.ProductDTO;
-import org.example.soundwave.model.entity.Type;
 import org.example.soundwave.model.request.ProductRequest;
 import org.example.soundwave.model.response.PageResponse;
 import org.example.soundwave.service.ProductService;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Tag(name = "Product")
 @RestController
@@ -31,10 +27,20 @@ public class ProductController {
             @RequestParam(value = "sortBy", defaultValue = "name", required = false) String sortBy,
             @RequestParam(value = "sortDir", defaultValue = "asc", required = false) String sortDir,
             @RequestParam(value = "name", defaultValue = "", required = false) String name,
-            @RequestParam(value = "type", required = false) Type type,
+            @RequestParam(value = "typeId", required = false) Long typeId,
             @RequestParam(value = "brandId", required = false) Long brandId,
             @RequestParam(value = "wireless", required = false) Boolean wireless) {
-        return ResponseEntity.ok(productService.getProducts(page, size, sortBy, sortDir, name, type, brandId, wireless));
+        return ResponseEntity.ok(productService.getProducts(page, size, sortBy, sortDir, name, typeId, brandId, wireless));
+    }
+
+    @GetMapping("/new")
+    public ResponseEntity<List<ProductDTO>> getNewProducts(){
+        return ResponseEntity.ok(productService.getNewProducts());
+    }
+
+    @GetMapping("/best")
+    public ResponseEntity<List<ProductDTO>> getBestSellersProducts(){
+        return ResponseEntity.ok(productService.getBestSellersProducts());
     }
 
     @PostMapping("/add")

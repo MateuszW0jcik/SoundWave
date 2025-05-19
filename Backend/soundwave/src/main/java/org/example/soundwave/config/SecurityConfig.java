@@ -44,7 +44,8 @@ public class SecurityConfig {
                                 "/api/product",
                                 "/api/brand",
                                 "/api/message/create",
-                                "/api/shipping_method"
+                                "/api/shipping_method",
+                                "/api/type"
                                 ).permitAll()
                         .anyRequest().authenticated()
                 )

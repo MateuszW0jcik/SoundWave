@@ -22,7 +22,8 @@ public class Product {
     @Column(nullable = false)
     private String name;
 
-    @Enumerated(EnumType.STRING)
+    @ManyToOne
+    @JoinColumn(name = "type_id")
     private Type type;
 
     @ManyToOne
