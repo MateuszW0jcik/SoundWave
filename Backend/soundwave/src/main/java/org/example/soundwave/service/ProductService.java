@@ -119,7 +119,7 @@ public class ProductService {
     }
 
     public List<ProductDTO> getNewProducts() {
-        List<Product> products = productRepository.findTop5ByOrderByAddedAtDesc();
+        List<Product> products = productRepository.findTop8ByOrderByAddedAtDesc();
 
         return products
                 .stream()
@@ -128,11 +128,15 @@ public class ProductService {
     }
 
     public List<ProductDTO> getBestSellersProducts() {
-        List<Product> products = productRepository.findTop5ByOrderByAddedAtDesc();
+        List<Product> products = productRepository.findTop8ByOrderByAddedAtAsc();
 
         return products
                 .stream()
                 .map(ProductDTO::new)
                 .collect(Collectors.toList());
+    }
+
+    public ProductDTO getProductById(Long id) {
+        return new ProductDTO(findProductById(id));
     }
 }

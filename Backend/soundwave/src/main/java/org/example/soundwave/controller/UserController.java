@@ -7,6 +7,7 @@ import org.example.soundwave.model.dto.ProductDTO;
 import org.example.soundwave.model.dto.TokenPair;
 import org.example.soundwave.model.dto.UserAdminOnlyDTO;
 import org.example.soundwave.model.dto.UserDTO;
+import org.example.soundwave.model.entity.Role;
 import org.example.soundwave.model.entity.Type;
 import org.example.soundwave.model.entity.User;
 import org.example.soundwave.model.request.ChangeUserLoginEmailRequest;
@@ -23,6 +24,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.stream.Collectors;
 
 @Tag(name = "User")
 @RestController
@@ -46,7 +49,7 @@ public class UserController {
     @GetMapping("/me")
     public ResponseEntity<MeResponse> getMe(@AuthenticationPrincipal UserDetails userDetails){
         User user = userService.findUserByUsername(userDetails.getUsername());
-        return ResponseEntity.ok(new MeResponse(user.getId(), user.getFirstName(), user.getLastName(), user.getEmail()));
+        return ResponseEntity.ok(new MeResponse(user.getId(), user.getFirstName(), user.getLastName(), user.getEmail(), user.getRoles().stream().map(Role::getName).collect(Collectors.toList())));
     }
 
     @PutMapping("/status")

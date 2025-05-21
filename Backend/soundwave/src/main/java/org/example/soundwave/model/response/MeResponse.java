@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Setter
 @Getter
 @AllArgsConstructor
@@ -14,4 +16,5 @@ public class MeResponse {
     public String firstName;
     public String lastName;
     public String email;
+    public List<String> roles;
 }

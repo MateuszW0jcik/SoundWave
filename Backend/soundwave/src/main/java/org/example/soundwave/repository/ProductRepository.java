@@ -15,9 +15,9 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     Optional<Product> findProductByName(String name);
     boolean existsProductByName(String name);
 
-    List<Product> findTop5ByOrderByAddedAtDesc();
+    List<Product> findTop8ByOrderByAddedAtDesc();
 
-    List<Product> findTop5ByOrderByAddedAtAsc();
+    List<Product> findTop8ByOrderByAddedAtAsc();
 
     Page<Product> findByNameContainingIgnoreCaseAndTypeIdAndBrandIdAndWireless(String name, Long typeId, Long brandId, Boolean wireless, Pageable pageable);
 
