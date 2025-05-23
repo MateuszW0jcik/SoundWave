@@ -9,10 +9,10 @@ import org.example.soundwave.model.entity.Brand;
 @AllArgsConstructor
 public class BrandDTO {
     private Long id;
-    private String brandName;
+    private String name;
 
     public BrandDTO(Brand brand) {
         id = brand.getId();
-        brandName = brand.getName();
+        name = brand.getName();
     }
 }

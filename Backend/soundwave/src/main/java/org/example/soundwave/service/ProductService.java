@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -76,8 +77,8 @@ public class ProductService {
     }
 
     public PageResponse<ProductDTO> getProducts(int pageNo, int pageSize, String sortBy, String sortDir,
-                                                String name, Long typeId, Long brandId, Boolean wireless) {
-
+                                                String name, List<Long> typeIds, List<Long> brandIds, Boolean wireless,
+                                                BigDecimal minPrice, BigDecimal maxPrice) {
         Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ?
                 Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
 
@@ -86,22 +87,58 @@ public class ProductService {
 
         name = name.trim();
 
-        if (typeId != null && brandId != null && wireless != null) {
-            products = productRepository.findByNameContainingIgnoreCaseAndTypeIdAndBrandIdAndWireless(name, typeId, brandId, wireless, pageable);
-        } else if (typeId != null && brandId != null) {
-            products = productRepository.findByNameContainingIgnoreCaseAndTypeIdAndBrandId(name, typeId, brandId, pageable);
-        } else if (typeId != null && wireless != null) {
-            products = productRepository.findByNameContainingIgnoreCaseAndTypeIdAndWireless(name, typeId, wireless, pageable);
-        } else if (brandId != null && wireless != null) {
-            products = productRepository.findByNameContainingIgnoreCaseAndBrandIdAndWireless(name, brandId, wireless, pageable);
-        } else if (typeId != null) {
-            products = productRepository.findByNameContainingIgnoreCaseAndTypeId(name, typeId, pageable);
-        } else if (brandId != null) {
-            products = productRepository.findByNameContainingIgnoreCaseAndBrandId(name, brandId, pageable);
-        } else if (wireless != null) {
-            products = productRepository.findByNameContainingIgnoreCaseAndWireless(name, wireless, pageable);
+        if (typeIds != null && !typeIds.isEmpty() && brandIds != null && !brandIds.isEmpty()) {
+            if (wireless != null && minPrice != null && maxPrice != null) {
+                products = productRepository.findByNameContainingIgnoreCaseAndTypeIdInAndBrandIdInAndWirelessAndPriceBetween(
+                        name, typeIds, brandIds, wireless, minPrice, maxPrice, pageable);
+            } else if (wireless != null) {
+                products = productRepository.findByNameContainingIgnoreCaseAndTypeIdInAndBrandIdInAndWireless(
+                        name, typeIds, brandIds, wireless, pageable);
+            } else if (minPrice != null && maxPrice != null) {
+                products = productRepository.findByNameContainingIgnoreCaseAndTypeIdInAndBrandIdInAndPriceBetween(
+                        name, typeIds, brandIds, minPrice, maxPrice, pageable);
+            } else {
+                products = productRepository.findByNameContainingIgnoreCaseAndTypeIdInAndBrandIdIn(
+                        name, typeIds, brandIds, pageable);
+            }
+        } else if (typeIds != null && !typeIds.isEmpty()) {
+            if (wireless != null && minPrice != null && maxPrice != null) {
+                products = productRepository.findByNameContainingIgnoreCaseAndTypeIdInAndWirelessAndPriceBetween(
+                        name, typeIds, wireless, minPrice, maxPrice, pageable);
+            } else if (wireless != null) {
+                products = productRepository.findByNameContainingIgnoreCaseAndTypeIdInAndWireless(
+                        name, typeIds, wireless, pageable);
+            } else if (minPrice != null && maxPrice != null) {
+                products = productRepository.findByNameContainingIgnoreCaseAndTypeIdInAndPriceBetween(
+                        name, typeIds, minPrice, maxPrice, pageable);
+            } else {
+                products = productRepository.findByNameContainingIgnoreCaseAndTypeIdIn(name, typeIds, pageable);
+            }
+        } else if (brandIds != null && !brandIds.isEmpty()) {
+            if (wireless != null && minPrice != null && maxPrice != null) {
+                products = productRepository.findByNameContainingIgnoreCaseAndBrandIdInAndWirelessAndPriceBetween(
+                        name, brandIds, wireless, minPrice, maxPrice, pageable);
+            } else if (wireless != null) {
+                products = productRepository.findByNameContainingIgnoreCaseAndBrandIdInAndWireless(
+                        name, brandIds, wireless, pageable);
+            } else if (minPrice != null && maxPrice != null) {
+                products = productRepository.findByNameContainingIgnoreCaseAndBrandIdInAndPriceBetween(
+                        name, brandIds, minPrice, maxPrice, pageable);
+            } else {
+                products = productRepository.findByNameContainingIgnoreCaseAndBrandIdIn(name, brandIds, pageable);
+            }
         } else {
-            products = productRepository.findByNameContainingIgnoreCase(name, pageable);
+            if (wireless != null && minPrice != null && maxPrice != null) {
+                products = productRepository.findByNameContainingIgnoreCaseAndWirelessAndPriceBetween(
+                        name, wireless, minPrice, maxPrice, pageable);
+            } else if (wireless != null) {
+                products = productRepository.findByNameContainingIgnoreCaseAndWireless(name, wireless, pageable);
+            } else if (minPrice != null && maxPrice != null) {
+                products = productRepository.findByNameContainingIgnoreCaseAndPriceBetween(
+                        name, minPrice, maxPrice, pageable);
+            } else {
+                products = productRepository.findByNameContainingIgnoreCase(name, pageable);
+            }
         }
 
         List<ProductDTO> content = products.getContent()
@@ -117,6 +154,8 @@ public class ProductService {
                 products.getTotalPages(),
                 products.isLast());
     }
+
+
 
     public List<ProductDTO> getNewProducts() {
         List<Product> products = productRepository.findTop8ByOrderByAddedAtDesc();

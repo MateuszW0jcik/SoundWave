@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Tag(name = "Product")
@@ -27,10 +28,12 @@ public class ProductController {
             @RequestParam(value = "sortBy", defaultValue = "name", required = false) String sortBy,
             @RequestParam(value = "sortDir", defaultValue = "asc", required = false) String sortDir,
             @RequestParam(value = "name", defaultValue = "", required = false) String name,
-            @RequestParam(value = "typeId", required = false) Long typeId,
-            @RequestParam(value = "brandId", required = false) Long brandId,
-            @RequestParam(value = "wireless", required = false) Boolean wireless) {
-        return ResponseEntity.ok(productService.getProducts(page, size, sortBy, sortDir, name, typeId, brandId, wireless));
+            @RequestParam(value = "typeId", required = false) List<Long> typeIds,
+            @RequestParam(value = "brandId", required = false) List<Long> brandIds,
+            @RequestParam(value = "wireless", required = false) Boolean wireless,
+            @RequestParam(value = "minPrice", required = false) BigDecimal minPrice,
+            @RequestParam(value = "maxPrice", required = false) BigDecimal maxPrice) {
+        return ResponseEntity.ok(productService.getProducts(page, size, sortBy, sortDir, name, typeIds, brandIds, wireless, minPrice, maxPrice));
     }
 
     @GetMapping("/{id}")
