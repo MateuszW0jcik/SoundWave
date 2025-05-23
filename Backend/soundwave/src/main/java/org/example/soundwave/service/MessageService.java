@@ -32,12 +32,13 @@ public class MessageService {
     public void createMessage(MessageRequest request, UserDetails userDetails) {
         if (userDetails != null && userService.existsByUsername(userDetails.getUsername())) {
             User user = userService.findUserByUsername(userDetails.getUsername());
-            if (exitsMessageByUser(user)) {
+            if (exitsMessageByEmail(user.getEmail())) {
                 throw new MessageException("Your last message is still waiting for the administrator to review it.");
             }
             Message message = Message.builder()
                     .content(request.content())
-                    .user(user)
+                    .email(user.getEmail())
+                    .name(user.getFirstName() + " " + user.getLastName())
                     .sentAt(Instant.now()).build();
             saveMessage(message);
         } else {
@@ -64,10 +65,6 @@ public class MessageService {
 
     public void saveMessage(Message message) {
         messageRepository.save(message);
-    }
-
-    public boolean exitsMessageByUser(User user) {
-        return messageRepository.existsMessageByUser(user);
     }
 
     public boolean exitsMessageByEmail(String email) {

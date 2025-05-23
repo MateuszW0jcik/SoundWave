@@ -60,7 +60,7 @@ public class PaymentService {
 
         payment.setEmail(request.email());
         payment.setPaymentMethod(request.paymentMethod());
-        payment.setExpirationDate(request.expirationDate());
+        payment.setExpirationDate(request.expirationDate().withDayOfMonth(1));
         payment.setLastDigits(request.lastDigits());
 
         savePayment(payment);
