@@ -5,7 +5,12 @@ import org.example.soundwave.model.dto.ShippingMethodDTO;
 import org.example.soundwave.model.entity.ShippingMethod;
 import org.example.soundwave.model.exception.ShippingMethodException;
 import org.example.soundwave.model.request.ShippingMethodRequest;
+import org.example.soundwave.model.response.PageResponse;
 import org.example.soundwave.repository.ShippingMethodRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
@@ -22,7 +27,28 @@ public class ShippingMethodService {
                 .orElseThrow(() -> new ShippingMethodException("Shipping method with id: " + id + " do not exist"));
     }
 
-    public List<ShippingMethodDTO> getShippingMethods() {
+    public PageResponse<ShippingMethodDTO> getShippingMethods(int pageNo, int pageSize, String sortBy, String sortDir, String name) {
+        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ?
+                Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+
+        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+        Page<ShippingMethod> shippingMethods = shippingMethodRepository.findByNameContainingIgnoreCase(name, pageable);
+
+        List<ShippingMethodDTO> content = shippingMethods.getContent()
+                .stream()
+                .map(ShippingMethodDTO::new)
+                .collect(Collectors.toList());
+
+        return new PageResponse<>(
+                content,
+                shippingMethods.getNumber(),
+                shippingMethods.getSize(),
+                shippingMethods.getTotalElements(),
+                shippingMethods.getTotalPages(),
+                shippingMethods.isLast());
+    }
+
+    public List<ShippingMethodDTO> getAllShippingMethods() {
         return shippingMethodRepository.findAll()
                 .stream()
                 .sorted(Comparator.comparing(ShippingMethod::getPrice).reversed())
