@@ -60,12 +60,12 @@ public class BrandService {
                 .orElseThrow(() -> new BrandException("Brand with id: " + id + " do not exist"));
     }
 
-    public PageResponse<BrandDTO> getBrands(int pageNo, int pageSize, String sortBy, String sortDir) {
+    public PageResponse<BrandDTO> getBrands(int pageNo, int pageSize, String sortBy, String sortDir, String name) {
         Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ?
                 Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
 
         Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
-        Page<Brand> brands = brandRepository.findAll(pageable);
+        Page<Brand> brands = brandRepository.findByNameContainingIgnoreCase(name, pageable);
 
         List<BrandDTO> content = brands.getContent()
                 .stream()
