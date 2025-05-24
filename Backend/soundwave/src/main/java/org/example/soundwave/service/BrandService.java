@@ -80,4 +80,8 @@ public class BrandService {
                 brands.getTotalPages(),
                 brands.isLast());
     }
+
+    public List<BrandDTO> getAllBrands() {
+        return brandRepository.findAll().stream().map(BrandDTO::new).collect(Collectors.toList());
+    }
 }

@@ -17,6 +17,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Tag(name = "Brand")
 @RestController
 @RequestMapping("/api/brand")
@@ -32,6 +34,11 @@ public class BrandController {
             @RequestParam(value = "sortDir", defaultValue = "asc", required = false) String sortDir,
             @RequestParam(value = "name", defaultValue = "", required = false) String name) {
         return ResponseEntity.ok(brandService.getBrands(page, size, sortBy, sortDir, name));
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<BrandDTO>> getAllBrands() {
+        return ResponseEntity.ok(brandService.getAllBrands());
     }
 
     @PostMapping("/add")
