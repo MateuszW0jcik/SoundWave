@@ -29,6 +29,7 @@ public class OrderService {
     private final ContactService contactService;
     private final AddressService addressService;
     private final PaymentService paymentService;
+    private final UserService userService;
     private final ShoppingCartItemService shoppingCartItemService;
     private final OrderedItemService orderedItemService;
     private final ShippingMethodService shippingMethodService;
@@ -52,6 +53,44 @@ public class OrderService {
                 orders.getTotalElements(),
                 orders.getTotalPages(),
                 orders.isLast());
+    }
+
+    public PageResponse<OrderDTO> getAllOrders(int pageNo, int pageSize, String sortBy, String sortDir, String ownerName) {
+        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ?
+                Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+
+        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+
+        List<User> matchedOwners = userService.getUsersByName(ownerName);
+
+        Page<Order> orders = orderRepository.findByUserIn(matchedOwners, pageable);
+
+        List<OrderDTO> content = orders.getContent()
+                .stream()
+                .map(OrderDTO::new)
+                .collect(Collectors.toList());
+
+        return new PageResponse<>(
+                content,
+                orders.getNumber(),
+                orders.getSize(),
+                orders.getTotalElements(),
+                orders.getTotalPages(),
+                orders.isLast());
+    }
+
+    public OrderDetailsDTO getOrderDetails(Long orderId) {
+        Order order = getOrderById(orderId);
+
+        OrderDetailsDTO orderDetailsDTO = new OrderDetailsDTO(order);
+
+        List<OrderedItem> orderedItems = orderedItemService.findOrderedItemsByOrder(order);
+
+        for(OrderedItem orderedItem : orderedItems){
+            orderDetailsDTO.getOrderedItemDTOs().add(new OrderedItemDTO(orderedItem));
+        }
+
+        return orderDetailsDTO;
     }
 
     public OrderDetailsDTO getUserOrderDetails(Long orderId, User user) {

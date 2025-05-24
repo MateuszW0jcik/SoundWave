@@ -99,7 +99,10 @@ public class UserService {
             Sort.Order lastNameOrder = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name())
                     ? Sort.Order.asc("lastName").ignoreCase()
                     : Sort.Order.desc("lastName").ignoreCase();
-            sort = Sort.by(lastNameOrder).and(Sort.by(firstNameOrder));
+            Sort.Order emailOrder = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name())
+                    ? Sort.Order.asc("email").ignoreCase()
+                    : Sort.Order.desc("email").ignoreCase();
+            sort = Sort.by(lastNameOrder).and(Sort.by(firstNameOrder)).and(Sort.by(emailOrder));
         } else {
             sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ?
                     Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
@@ -122,6 +125,10 @@ public class UserService {
                 users.getTotalElements(),
                 users.getTotalPages(),
                 users.isLast());
+    }
+
+    public List<User> getUsersByName(String name){
+        return userRepository.findByName(name);
     }
 
     @Transactional

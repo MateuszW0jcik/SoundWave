@@ -18,12 +18,14 @@ public class OrderDTO {
     private Long id;
     private BigDecimal totalPrice;
     private PaymentMethod paymentMethod;
+    private String owner;
     private Instant placedOn;
 
     public OrderDTO(Order order){
         id = order.getId();
         totalPrice = order.getTotalPrice();
         paymentMethod = order.getPaymentMethod();
+        owner = order.getUser().getFirstName() + " " + order.getUser().getLastName() + " (" + order.getUser().getEmail() + ")";
         placedOn = order.getPlacedOn();
     }
 }

@@ -13,6 +13,7 @@ import org.example.soundwave.model.response.PageResponse;
 import org.example.soundwave.service.OrderService;
 import org.example.soundwave.service.UserService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -36,6 +37,23 @@ public class OrderController {
             @AuthenticationPrincipal UserDetails userDetails) {
         User user = userService.findUserByUsername(userDetails.getUsername());
         return ResponseEntity.ok(orderService.getUserOrders(user, page, size, sortBy, sortDir));
+    }
+
+    @GetMapping("/all")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<PageResponse<OrderDTO>> getAllOrders(
+            @RequestParam(value = "page", defaultValue = "0", required = false) int page,
+            @RequestParam(value = "size", defaultValue = "10", required = false) int size,
+            @RequestParam(value = "sortBy", defaultValue = "id", required = false) String sortBy,
+            @RequestParam(value = "sortDir", defaultValue = "asc", required = false) String sortDir,
+            @RequestParam(value = "ownerName", defaultValue = "", required = false) String ownerName) {
+        return ResponseEntity.ok(orderService.getAllOrders(page, size, sortBy, sortDir, ownerName));
+    }
+
+    @GetMapping("/{id}/admin/details")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<OrderDetailsDTO> getOrderDetails(@PathVariable Long id) {
+        return ResponseEntity.ok(orderService.getOrderDetails(id));
     }
 
     @GetMapping("/{id}/details")
