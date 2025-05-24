@@ -29,5 +29,5 @@ public class OrderedItem {
 
     private Long quantity;
 
-    private String imageURL;
+    private Long productIdForImage;
 }

@@ -11,12 +11,10 @@ import java.math.BigDecimal;
 public record ProductRequest(
         @NotBlank(message = "Name can't be empty")
         String name,
-        @NotNull(message = "Type can't be null")
-        Long typeId,
-        @NotNull(message = "Brand can't be null")
-        Long brandId,
-        @NotBlank(message = "Image URL can't be empty")
-        String imageURL,
+        @NotBlank(message = "Type can't be empty")
+        String typeName,
+        @NotBlank(message = "Brand can't be empty")
+        String brandName,
         @NotBlank(message = "Description can't be empty")
         String description,
         @NotNull(message = "Wireless can't be null")

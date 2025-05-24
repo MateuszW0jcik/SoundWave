@@ -10,7 +10,7 @@ import java.util.Optional;
 public interface TypeRepository extends JpaRepository<Type, Long> {
     Optional<Type> findTypeById(Long id);
 
-    Optional<Type> findTypedByName(String name);
+    Optional<Type> findTypeByName(String name);
 
     Page<Type> findByNameContainingIgnoreCase(String name, Pageable pageable);
 }

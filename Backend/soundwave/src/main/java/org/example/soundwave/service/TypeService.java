@@ -28,6 +28,11 @@ public class TypeService {
                 .orElseThrow(() -> new TypeException("Type with id: " + id + " do not exist"));
     }
 
+    public Type findTypeByName(String typeName) {
+        return typeRepository.findTypeByName(typeName)
+                .orElseThrow(() -> new TypeException("Type with name: " + typeName + " do not exist"));
+    }
+
     public PageResponse<TypeDTO> getTypes(int pageNo, int pageSize, String sortBy, String sortDir, String name) {
         Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ?
                 Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();

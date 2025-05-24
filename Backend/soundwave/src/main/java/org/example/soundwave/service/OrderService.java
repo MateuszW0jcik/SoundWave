@@ -158,7 +158,7 @@ public class OrderService {
                     .brandName(shoppingCartItem.getProduct().getBrand().getName())
                     .price(shoppingCartItem.getProduct().getPrice())
                     .quantity(shoppingCartItem.getQuantity())
-                    .imageURL(shoppingCartItem.getProduct().getImageURL()).build();
+                    .productIdForImage(shoppingCartItem.getProduct().getId()).build();
 
             orderedItemService.saveOrderedItem(orderedItem);
         }

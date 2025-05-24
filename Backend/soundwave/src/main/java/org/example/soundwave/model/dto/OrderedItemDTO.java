@@ -17,13 +17,13 @@ public class OrderedItemDTO {
     private String brandName;
     private BigDecimal price;
     private Long quantity;
-    private String imageURL;
+    private Long productIdForImage;
 
     public OrderedItemDTO(OrderedItem orderedItem){
         productName = orderedItem.getProductName();
         brandName = orderedItem.getBrandName();
         price = orderedItem.getPrice();
         quantity = orderedItem.getQuantity();
-        imageURL = orderedItem.getImageURL();
+        productIdForImage = orderedItem.getProductIdForImage();
     }
 }

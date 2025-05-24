@@ -1,5 +1,8 @@
 package org.example.soundwave.service;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
 import lombok.AllArgsConstructor;
 import org.example.soundwave.model.entity.Brand;
 import org.example.soundwave.model.entity.Product;
@@ -14,10 +17,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,41 +32,56 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final BrandService brandService;
     private final TypeService typeService;
+    @PersistenceContext
+    private EntityManager entityManager;
 
-    public void addProduct(ProductRequest request) {
+    public void addProduct(ProductRequest request, MultipartFile image) {
         Product product = Product.builder()
                 .name(request.name())
                 .price(request.price())
                 .description(request.description())
                 .quantity(request.quantity())
                 .wireless(request.wireless())
-                .imageURL(request.imageURL())
                 .addedAt(Instant.now()).build();
 
-        Brand brand = brandService.findBrandById(request.brandId());
+        Brand brand = brandService.findBrandByName(request.brandName());
 
-        Type type = typeService.findTypeById(request.typeId());
+        Type type = typeService.findTypeByName(request.typeName());
 
         product.setBrand(brand);
         product.setType(type);
+
+        product.setImageType(image.getContentType());
+        try {
+            product.setImageData(image.getBytes());
+        } catch (Exception e) {
+            throw new ProductException("Failed to store image");
+        }
 
         productRepository.save(product);
     }
 
-    public void editProduct(Long id, ProductRequest request) {
+    public void editProduct(Long id, ProductRequest request, MultipartFile image) {
         Product product = findProductById(id);
 
-        Brand brand = brandService.findBrandById(request.brandId());
-        Type type = typeService.findTypeById(request.typeId());
+        Brand brand = brandService.findBrandByName(request.brandName());
+        Type type = typeService.findTypeByName(request.typeName());
 
         product.setName(request.name());
         product.setType(type);
         product.setBrand(brand);
-        product.setImageURL(request.imageURL());
         product.setDescription(request.description());
         product.setWireless(request.wireless());
         product.setPrice(request.price());
         product.setQuantity(request.quantity());
+        if (image != null) {
+            product.setImageType(image.getContentType());
+            try {
+                product.setImageData(image.getBytes());
+            } catch (Exception e) {
+                throw new ProductException("Failed to store image");
+            }
+        }
 
         productRepository.save(product);
     }
@@ -79,100 +100,80 @@ public class ProductService {
     public PageResponse<ProductDTO> getProducts(int pageNo, int pageSize, String sortBy, String sortDir,
                                                 String name, List<Long> typeIds, List<Long> brandIds, Boolean wireless,
                                                 BigDecimal minPrice, BigDecimal maxPrice) {
-        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ?
-                Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        StringBuilder jpql = new StringBuilder();
+        jpql.append("SELECT new org.example.soundwave.model.dto.ProductDTO(");
+        jpql.append("p.id, p.name, p.description, p.type.name, p.brand.name, ");
+        jpql.append("p.wireless, p.price, p.quantity, p.addedAt) ");
+        jpql.append("FROM Product p WHERE 1=1 ");
 
-        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
-        Page<Product> products;
+        Map<String, Object> parameters = new HashMap<>();
 
-        name = name.trim();
-
-        if (typeIds != null && !typeIds.isEmpty() && brandIds != null && !brandIds.isEmpty()) {
-            if (wireless != null && minPrice != null && maxPrice != null) {
-                products = productRepository.findByNameContainingIgnoreCaseAndTypeIdInAndBrandIdInAndWirelessAndPriceBetween(
-                        name, typeIds, brandIds, wireless, minPrice, maxPrice, pageable);
-            } else if (wireless != null) {
-                products = productRepository.findByNameContainingIgnoreCaseAndTypeIdInAndBrandIdInAndWireless(
-                        name, typeIds, brandIds, wireless, pageable);
-            } else if (minPrice != null && maxPrice != null) {
-                products = productRepository.findByNameContainingIgnoreCaseAndTypeIdInAndBrandIdInAndPriceBetween(
-                        name, typeIds, brandIds, minPrice, maxPrice, pageable);
-            } else {
-                products = productRepository.findByNameContainingIgnoreCaseAndTypeIdInAndBrandIdIn(
-                        name, typeIds, brandIds, pageable);
-            }
-        } else if (typeIds != null && !typeIds.isEmpty()) {
-            if (wireless != null && minPrice != null && maxPrice != null) {
-                products = productRepository.findByNameContainingIgnoreCaseAndTypeIdInAndWirelessAndPriceBetween(
-                        name, typeIds, wireless, minPrice, maxPrice, pageable);
-            } else if (wireless != null) {
-                products = productRepository.findByNameContainingIgnoreCaseAndTypeIdInAndWireless(
-                        name, typeIds, wireless, pageable);
-            } else if (minPrice != null && maxPrice != null) {
-                products = productRepository.findByNameContainingIgnoreCaseAndTypeIdInAndPriceBetween(
-                        name, typeIds, minPrice, maxPrice, pageable);
-            } else {
-                products = productRepository.findByNameContainingIgnoreCaseAndTypeIdIn(name, typeIds, pageable);
-            }
-        } else if (brandIds != null && !brandIds.isEmpty()) {
-            if (wireless != null && minPrice != null && maxPrice != null) {
-                products = productRepository.findByNameContainingIgnoreCaseAndBrandIdInAndWirelessAndPriceBetween(
-                        name, brandIds, wireless, minPrice, maxPrice, pageable);
-            } else if (wireless != null) {
-                products = productRepository.findByNameContainingIgnoreCaseAndBrandIdInAndWireless(
-                        name, brandIds, wireless, pageable);
-            } else if (minPrice != null && maxPrice != null) {
-                products = productRepository.findByNameContainingIgnoreCaseAndBrandIdInAndPriceBetween(
-                        name, brandIds, minPrice, maxPrice, pageable);
-            } else {
-                products = productRepository.findByNameContainingIgnoreCaseAndBrandIdIn(name, brandIds, pageable);
-            }
-        } else {
-            if (wireless != null && minPrice != null && maxPrice != null) {
-                products = productRepository.findByNameContainingIgnoreCaseAndWirelessAndPriceBetween(
-                        name, wireless, minPrice, maxPrice, pageable);
-            } else if (wireless != null) {
-                products = productRepository.findByNameContainingIgnoreCaseAndWireless(name, wireless, pageable);
-            } else if (minPrice != null && maxPrice != null) {
-                products = productRepository.findByNameContainingIgnoreCaseAndPriceBetween(
-                        name, minPrice, maxPrice, pageable);
-            } else {
-                products = productRepository.findByNameContainingIgnoreCase(name, pageable);
-            }
+        if (name != null && !name.trim().isEmpty()) {
+            jpql.append("AND LOWER(p.name) LIKE LOWER(:name) ");
+            parameters.put("name", "%" + name.trim() + "%");
         }
 
-        List<ProductDTO> content = products.getContent()
-                .stream()
-                .map(ProductDTO::new)
-                .collect(Collectors.toList());
+        if (typeIds != null && !typeIds.isEmpty()) {
+            jpql.append("AND p.type.id IN :typeIds ");
+            parameters.put("typeIds", typeIds);
+        }
+
+        if (brandIds != null && !brandIds.isEmpty()) {
+            jpql.append("AND p.brand.id IN :brandIds ");
+            parameters.put("brandIds", brandIds);
+        }
+
+        if (wireless != null) {
+            jpql.append("AND p.wireless = :wireless ");
+            parameters.put("wireless", wireless);
+        }
+
+        if (minPrice != null) {
+            jpql.append("AND p.price >= :minPrice ");
+            parameters.put("minPrice", minPrice);
+        }
+
+        if (maxPrice != null) {
+            jpql.append("AND p.price <= :maxPrice ");
+            parameters.put("maxPrice", maxPrice);
+        }
+
+        jpql.append("ORDER BY p.").append(sortBy).append(" ").append(sortDir.toUpperCase());
+
+        TypedQuery<ProductDTO> query = entityManager.createQuery(jpql.toString(), ProductDTO.class);
+        parameters.forEach(query::setParameter);
+
+        query.setFirstResult(pageNo * pageSize);
+        query.setMaxResults(pageSize);
+
+        List<ProductDTO> content = query.getResultList();
+
+        String countJpql = jpql.toString()
+                .replace("SELECT new org.example.soundwave.model.dto.ProductDTO(p.id, p.name, p.description, p.type.name, p.brand.name, p.wireless, p.price, p.quantity, p.addedAt)", "SELECT COUNT(p)")
+                .replaceAll("ORDER BY.*", "");
+
+        TypedQuery<Long> countQuery = entityManager.createQuery(countJpql, Long.class);
+        parameters.forEach(countQuery::setParameter);
+
+        Long totalElements = countQuery.getSingleResult();
+        int totalPages = (int) Math.ceil((double) totalElements / pageSize);
 
         return new PageResponse<>(
                 content,
-                products.getNumber(),
-                products.getSize(),
-                products.getTotalElements(),
-                products.getTotalPages(),
-                products.isLast());
+                pageNo,
+                pageSize,
+                totalElements,
+                totalPages,
+                pageNo >= totalPages - 1);
     }
 
-
-
     public List<ProductDTO> getNewProducts() {
-        List<Product> products = productRepository.findTop8ByOrderByAddedAtDesc();
-
-        return products
-                .stream()
-                .map(ProductDTO::new)
-                .collect(Collectors.toList());
+        return productRepository.findRecentProducts(PageRequest.of(0, 8));
     }
 
     public List<ProductDTO> getBestSellersProducts() {
-        List<Product> products = productRepository.findTop8ByOrderByAddedAtAsc();
+        return productRepository.findOldestProducts(PageRequest.of(0, 8));
 
-        return products
-                .stream()
-                .map(ProductDTO::new)
-                .collect(Collectors.toList());
     }
 
     public ProductDTO getProductById(Long id) {

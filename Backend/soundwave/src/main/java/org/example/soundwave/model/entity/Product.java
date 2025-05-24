@@ -30,8 +30,6 @@ public class Product {
     @JoinColumn(name = "brand_id")
     private Brand brand;
 
-    private String imageURL;
-
     @Column(columnDefinition = "TEXT")
     private String description;
 
@@ -42,4 +40,9 @@ public class Product {
     private Integer quantity;
 
     private Instant addedAt;
+
+    private String imageType;
+
+    @Lob
+    private byte[] imageData;
 }
