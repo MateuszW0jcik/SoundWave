@@ -49,6 +49,10 @@ public class AuthService {
     public LoginResponse login(LoginRequest request) {
         User user = userService.findUserByEmail(request.email());
 
+        if (!user.isActive()) {
+            throw new AuthException("Your account is deactivated");
+        }
+
         if (!passwordEncoder.matches(request.password(), user.getPassword())) {
             throw new AuthException("Invalid password");
         }
