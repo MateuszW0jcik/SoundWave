@@ -4,25 +4,20 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.soundwave.model.dto.TokenPair;
-import org.example.soundwave.model.entity.RefreshToken;
-import org.example.soundwave.model.entity.User;
-import org.example.soundwave.model.exception.AuthException;
 import org.example.soundwave.model.request.LoginRequest;
 import org.example.soundwave.model.request.RefreshRequest;
 import org.example.soundwave.model.request.RegisterRequest;
 import org.example.soundwave.model.response.LoginResponse;
 import org.example.soundwave.model.response.RefreshResponse;
-import org.example.soundwave.repository.UserRepository;
-import org.example.soundwave.security.JwtTokenProvider;
 import org.example.soundwave.service.AuthService;
 import org.example.soundwave.service.RefreshTokenService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Map;
 
 @Tag(name = "Auth")
 @RestController
@@ -41,6 +36,12 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
         return ResponseEntity.ok(authService.login(request));
+    }
+
+    @PostMapping("/login/google")
+    public ResponseEntity<LoginResponse> loginWithGoogle(@RequestBody Map<String, String> payload) {
+        String idToken = payload.get("idToken");
+        return ResponseEntity.ok(authService.loginViaGoogle(idToken));
     }
 
     @PostMapping("/token/refresh")
