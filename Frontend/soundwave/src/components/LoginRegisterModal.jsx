@@ -4,7 +4,6 @@ import {useAuth} from '../contexts/AuthContext';
 import {Link} from "react-router-dom";
 import {GoogleLogin, GoogleOAuthProvider} from "@react-oauth/google";
 import {toast} from "react-toastify";
-import {useCart} from "../contexts/CartContext.jsx";
 import {useTranslations} from "../contexts/LanguageContext.jsx";
 
 
@@ -22,7 +21,6 @@ const LoginRegisterModal = ({isOpen, onClose, onLoginSuccess}) => {
 
     const clientId = import.meta.env.VITE_REACT_APP_GOOGLE_CLIENT_ID;
 
-    // Form states
     const [loginForm, setLoginForm] = useState({
         email: '',
         password: '',
@@ -70,7 +68,7 @@ const LoginRegisterModal = ({isOpen, onClose, onLoginSuccess}) => {
             const response = await login({
                 email: loginForm.email,
                 password: loginForm.password
-            });
+            }, loginForm.remember);
 
             setSuccess(t.loginSuccessful);
             onLoginSuccess && onLoginSuccess(response);
@@ -139,7 +137,6 @@ const LoginRegisterModal = ({isOpen, onClose, onLoginSuccess}) => {
                 terms: false
             });
         } catch (err) {
-            // Check if it's a validation error with field-specific errors
             if (err.errors) {
                 setFieldErrors(err.errors);
                 setError(t.pleaseFixErrors);

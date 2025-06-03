@@ -4,7 +4,7 @@ import orderService from "../../services/orderService.js";
 import Pagination from "../../components/Pagination.jsx";
 import OrderDetailsModal from "../../components/OrderDetailsModal.jsx";
 import {Search} from 'lucide-react';
-import {useTranslations} from "../../contexts/LanguageContext.jsx"; // Adjust the path as needed
+import {useTranslations} from "../../contexts/LanguageContext.jsx";
 
 const DashboardOrders = () => {
     const searchInputRef = useRef(null);
@@ -18,7 +18,7 @@ const DashboardOrders = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
     const currentPage = parseInt(searchParams.get('page') || '1');
-    const t = useTranslations(); // Initialize useTranslations hook
+    const t = useTranslations();
 
     useEffect(() => {
         const handler = setTimeout(() => {
@@ -108,7 +108,7 @@ const DashboardOrders = () => {
         <div className="w-full max-w-6xl mx-auto px-5">
             <div className="flex items-center w-full border border-gray-300 rounded px-3 py-2 bg-white mb-4">
                 <Search
-                    alt={t.search} // Assuming 'search' is a translation key for alt text
+                    alt={t.search}
                     className="w-5 h-5 mr-2 select-none"
                 />
                 <input

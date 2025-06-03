@@ -4,7 +4,7 @@ import {Plus, Search} from 'lucide-react';
 import Pagination from "../../components/Pagination.jsx";
 import DynamicModal from "../../components/DynamicModal.jsx";
 import shippingMethodService from "../../services/shippingMethodService.js";
-import {useTranslations} from "../../contexts/LanguageContext.jsx"; // Adjust the path as needed
+import {useTranslations} from "../../contexts/LanguageContext.jsx";
 
 const DashboardShippingMethods = () => {
     const searchInputRef = useRef(null);
@@ -15,7 +15,7 @@ const DashboardShippingMethods = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
     const currentPage = parseInt(searchParams.get('page') || '1');
-    const t = useTranslations(); // Initialize useTranslations hook
+    const t = useTranslations();
 
     const [modal, setModal] = useState({
         isOpen: false,

@@ -5,7 +5,7 @@ import ProductCard from "./ProductCard.jsx";
 const ProductSlider = ({ title, products, onAddToCart }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isHovered, setIsHovered] = useState(false);
-    const itemsPerView = 4; // Show 4 products at a time
+    const itemsPerView = 4;
     const maxIndex = Math.max(0, products.length - itemsPerView);
 
     const nextSlide = () => {

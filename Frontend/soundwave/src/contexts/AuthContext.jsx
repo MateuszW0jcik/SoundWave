@@ -2,7 +2,6 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import authService from '../services/authService';
 import userService from "../services/userService.js";
 import {toast} from "react-toastify";
-import {useNavigate} from "react-router-dom";
 import {useTranslations} from "./LanguageContext.jsx";
 
 
@@ -17,18 +16,30 @@ export const AuthProvider = ({ children }) => {
 
     useEffect(() => {
         const checkAuthStatus = async () => {
-            if (authService.isLoggedIn()) {
+            setLoading(true);
+            let accessToken = localStorage.getItem('accessToken') || sessionStorage.getItem('accessToken');
+            let refreshToken = localStorage.getItem('refreshToken') || sessionStorage.getItem('refreshToken');
+
+            if (accessToken && refreshToken) {
                 try {
                     const userData = await userService.getMe();
                     setUser(userData);
                     setIsAuthenticated(true);
                     setIsAdmin(userData.roles.includes('ADMIN'));
                 } catch (error) {
-                    console.error('Failed to get user data:', error);
-                    authService.logout();
+                    console.error('Failed to get user data or token invalid:', error);
+                    localStorage.removeItem('accessToken');
+                    localStorage.removeItem('refreshToken');
+                    sessionStorage.removeItem('accessToken');
+                    sessionStorage.removeItem('refreshToken');
                     setIsAuthenticated(false);
                     setIsAdmin(false);
+                    setUser(null);
                 }
+            } else {
+                setIsAuthenticated(false);
+                setIsAdmin(false);
+                setUser(null);
             }
             setLoading(false);
         };
@@ -36,13 +47,22 @@ export const AuthProvider = ({ children }) => {
         checkAuthStatus();
     }, []);
 
-    const login = async (credentials) => {
+    const login = async (credentials, rememberMe = false) => {
         try {
             const response = await authService.login(credentials);
-            localStorage.setItem('accessToken', response.accessToken);
-            localStorage.setItem('refreshToken', response.refreshToken);
 
-            // Get user data after successful login
+            if (rememberMe) {
+                localStorage.setItem('accessToken', response.accessToken);
+                localStorage.setItem('refreshToken', response.refreshToken);
+                sessionStorage.removeItem('accessToken');
+                sessionStorage.removeItem('refreshToken');
+            } else {
+                sessionStorage.setItem('accessToken', response.accessToken);
+                sessionStorage.setItem('refreshToken', response.refreshToken);
+                localStorage.removeItem('accessToken');
+                localStorage.removeItem('refreshToken');
+            }
+
             const userData = await userService.getMe();
             setUser(userData);
             setIsAuthenticated(true);
@@ -61,6 +81,8 @@ export const AuthProvider = ({ children }) => {
             const response = await authService.loginViaGoogle(idToken);
             localStorage.setItem('accessToken', response.accessToken);
             localStorage.setItem('refreshToken', response.refreshToken);
+            sessionStorage.removeItem('accessToken');
+            sessionStorage.removeItem('refreshToken');
 
             const userData = await userService.getMe();
             setUser(userData);
@@ -88,7 +110,11 @@ export const AuthProvider = ({ children }) => {
     };
 
     const logout = () => {
-        authService.logout();
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        sessionStorage.removeItem('accessToken');
+        sessionStorage.removeItem('refreshToken');
+
         setUser(null);
         setIsAuthenticated(false);
         setIsAdmin(false);

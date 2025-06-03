@@ -4,12 +4,12 @@ import {User, Package, DollarSign, Key, Mail, Shield, LogOut} from 'lucide-react
 import {useAuth} from "../../contexts/AuthContext.jsx";
 import Header from "../../components/Header.jsx";
 import Footer from "../../components/Footer.jsx";
-import {useTranslations} from "../../contexts/LanguageContext.jsx"; // Import useTranslations
+import {useTranslations} from "../../contexts/LanguageContext.jsx";
 
 const Account = () => {
     const {user, isAdmin, logout} = useAuth();
     const location = useLocation();
-    const t = useTranslations(); // Initialize useTranslations hook
+    const t = useTranslations();
 
     const breadcrumbText = useMemo(() => {
         const path = location.pathname.toLowerCase();
@@ -20,7 +20,7 @@ const Account = () => {
         if (path.includes('security')) return t.securityAccess;
         if (path.includes('contact')) return t.contactUs;
         return t.account;
-    }, [location.pathname, t]); // Add 't' to the dependency array
+    }, [location.pathname, t]);
 
     const handleLogout = () => {
         logout();

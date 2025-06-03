@@ -1,7 +1,7 @@
 import React from 'react';
 import {Link, NavLink, Outlet} from 'react-router-dom';
 import {ArrowLeft} from 'lucide-react';
-import {useTranslations} from "../../contexts/LanguageContext.jsx"; // Adjust the path as needed
+import {useTranslations} from "../../contexts/LanguageContext.jsx";
 
 const Dashboard = () => {
     const t = useTranslations();

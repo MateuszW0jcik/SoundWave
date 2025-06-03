@@ -9,7 +9,7 @@ import Footer from "../components/Footer.jsx";
 import {useAuth} from "../contexts/AuthContext.jsx";
 import {useCart} from "../contexts/CartContext.jsx";
 import {useLoginRegisterModal} from "../contexts/LoginRegisterModalContext.jsx";
-import {useTranslations} from "../contexts/LanguageContext.jsx"; // Adjust the path as needed
+import {useTranslations} from "../contexts/LanguageContext.jsx";
 
 const Home = () => {
     const [newProducts, setNewProducts] = useState([]);
@@ -19,7 +19,7 @@ const Home = () => {
     const {isAuthenticated} = useAuth();
     const {addUserShoppingCartItem} = useCart();
     const {openModal} = useLoginRegisterModal();
-    const t = useTranslations(); // Initialize useTranslations hook
+    const t = useTranslations();
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -41,7 +41,7 @@ const Home = () => {
         };
 
         fetchProducts();
-    }, [t]); // Added t to dependency array
+    }, [t]);
 
     const handleAddToCart = async (productId) => {
         if (isAuthenticated) {

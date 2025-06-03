@@ -3,7 +3,7 @@ import {useSearchParams} from "react-router-dom";
 import messageService from "../../services/messageService.js";
 import Pagination from "../../components/Pagination.jsx";
 import {toast} from "react-toastify";
-import {useTranslations} from "../../contexts/LanguageContext.jsx"; // Adjust the path as needed
+import {useTranslations} from "../../contexts/LanguageContext.jsx";
 
 const DashboardMessages = () => {
     const [searchParams, setSearchParams] = useSearchParams();
@@ -11,7 +11,7 @@ const DashboardMessages = () => {
     const [loading, setLoading] = useState(true);
     const [deleting, setDeleting] = useState(false);
     const [totalPages, setTotalPages] = useState(0);
-    const t = useTranslations(); // Initialize useTranslations hook
+    const t = useTranslations();
 
     const currentPage = parseInt(searchParams.get('page') || '1');
 

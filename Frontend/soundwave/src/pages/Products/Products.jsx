@@ -15,12 +15,12 @@ import {toast} from "react-toastify";
 import {useAuth} from "../../contexts/AuthContext.jsx";
 import {useCart} from "../../contexts/CartContext.jsx";
 import {useLoginRegisterModal} from "../../contexts/LoginRegisterModalContext.jsx";
-import {useTranslations} from "../../contexts/LanguageContext.jsx"; // Adjust the path as needed
+import {useTranslations} from "../../contexts/LanguageContext.jsx";
 
 const ProductPage = () => {
     const [searchParams, setSearchParams] = useSearchParams();
     const navigate = useNavigate();
-    const t = useTranslations(); // Initialize useTranslations hook
+    const t = useTranslations();
 
     const [products, setProducts] = useState([]);
     const [totalPages, setTotalPages] = useState(0);
@@ -34,7 +34,6 @@ const ProductPage = () => {
     const {addUserShoppingCartItem} = useCart();
     const {openModal} = useLoginRegisterModal();
 
-    // UI state
     const [expandedFilters, setExpandedFilters] = useState({
         price: true,
         brand: true,
@@ -101,7 +100,7 @@ const ProductPage = () => {
         };
 
         loadData();
-    }, [searchParams, t]); // Added t to dependency array
+    }, [searchParams, t]);
 
     const toggleFilter = (filterName) => {
         setExpandedFilters(prev => ({

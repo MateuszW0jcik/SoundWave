@@ -6,7 +6,7 @@ import DynamicModal from "../../components/DynamicModal.jsx";
 import productService from "../../services/productService.js";
 import brandService from "../../services/brandService.js";
 import typeService from "../../services/typeService.js";
-import {useTranslations} from "../../contexts/LanguageContext.jsx"; // Adjust the path as needed
+import {useTranslations} from "../../contexts/LanguageContext.jsx";
 
 const DashboardProducts = () => {
     const searchInputRef = useRef(null);
@@ -17,7 +17,7 @@ const DashboardProducts = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
     const currentPage = parseInt(searchParams.get('page') || '1');
-    const t = useTranslations(); // Initialize useTranslations hook
+    const t = useTranslations();
 
     const [modal, setModal] = useState({
         isOpen: false,
@@ -136,7 +136,7 @@ const DashboardProducts = () => {
                         label: t.type,
                         type: 'select',
                         options: types,
-                        getOptionLabel: (tOption) => tOption.name, // Renamed t to tOption to avoid conflict with translation function
+                        getOptionLabel: (tOption) => tOption.name,
                         getOptionValue: (tOption) => tOption.name,
                         required: true
                     },

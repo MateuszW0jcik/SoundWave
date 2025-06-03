@@ -5,12 +5,12 @@ import Footer from "../components/Footer.jsx";
 import {Link, useNavigate} from "react-router-dom";
 import messageService from "../services/messageService.js";
 import {useAuth} from "../contexts/AuthContext.jsx";
-import {useTranslations} from "../contexts/LanguageContext.jsx"; // Adjust the path as needed
+import {useTranslations} from "../contexts/LanguageContext.jsx";
 
 const Contact = () => {
     const navigate = useNavigate();
     const { isAuthenticated } = useAuth();
-    const t = useTranslations(); // Initialize useTranslations hook
+    const t = useTranslations();
 
     useEffect(() => {
         if (isAuthenticated) {
@@ -54,7 +54,6 @@ const Contact = () => {
 
     const handleMessageChange = (e) => {
         setMessage(e.target.value);
-        // Clear status when user starts typing
         if (submitStatus) {
             setSubmitStatus(null);
         }
@@ -62,7 +61,6 @@ const Contact = () => {
 
     const handleNameChange = (e) => {
         setName(e.target.value);
-        // Clear status when user starts typing
         if (submitStatus) {
             setSubmitStatus(null);
         }
@@ -70,7 +68,6 @@ const Contact = () => {
 
     const handleEmailChange = (e) => {
         setEmail(e.target.value);
-        // Clear status when user starts typing
         if (submitStatus) {
             setSubmitStatus(null);
         }

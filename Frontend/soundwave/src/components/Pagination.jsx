@@ -10,7 +10,7 @@ export const Pagination = ({
     const getPageNumbers = () => {
         const pageNumbers = [];
 
-        if (totalPages <= 7) {
+        if (totalPages <= 5) {
             for (let i = 1; i <= totalPages; i++) {
                 pageNumbers.push(i);
             }

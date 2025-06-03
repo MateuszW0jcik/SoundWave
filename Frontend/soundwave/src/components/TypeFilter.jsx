@@ -4,7 +4,6 @@ import {useTranslations} from "../contexts/LanguageContext.jsx";
 const TypeFilter = ({ expanded, toggleFilter, types, selectedTypeIds, updateFilters }) => {
     const t = useTranslations();
 
-    // Handle type checkbox change
     const handleTypeChange = (typeId) => {
         const current = selectedTypeIds || [];
         let updated;

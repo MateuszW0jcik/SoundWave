@@ -3,10 +3,10 @@ import Header from "../components/Header.jsx";
 import Footer from "../components/Footer.jsx";
 import {Link} from "react-router-dom";
 import aboutUsBanner from "../assets/banners/about_us.png";
-import {useTranslations} from "../contexts/LanguageContext.jsx"; // Adjust the path as needed
+import {useTranslations} from "../contexts/LanguageContext.jsx";
 
 const About = () => {
-    const t = useTranslations(); // Initialize useTranslations hook
+    const t = useTranslations();
 
     return (
         <>
@@ -25,7 +25,7 @@ const About = () => {
                         <img
                             className="w-full object-cover rounded-lg"
                             src={aboutUsBanner}
-                            alt={t.aboutUsBannerAlt} // Add alt text translation
+                            alt={t.aboutUsBannerAlt}
                         />
                     </div>
 

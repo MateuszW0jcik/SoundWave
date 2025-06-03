@@ -4,7 +4,7 @@ import {Plus, Search} from 'lucide-react';
 import brandService from "../../services/brandService.js";
 import Pagination from "../../components/Pagination.jsx";
 import DynamicModal from "../../components/DynamicModal.jsx";
-import {useTranslations} from "../../contexts/LanguageContext.jsx"; // Adjust the path as needed
+import {useTranslations} from "../../contexts/LanguageContext.jsx";
 
 const DashboardBrands = () => {
     const searchInputRef = useRef(null);
@@ -15,7 +15,7 @@ const DashboardBrands = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
     const currentPage = parseInt(searchParams.get('page') || '1');
-    const t = useTranslations(); // Initialize useTranslations hook
+    const t = useTranslations();
     const [modal, setModal] = useState({
         isOpen: false,
         type: '',

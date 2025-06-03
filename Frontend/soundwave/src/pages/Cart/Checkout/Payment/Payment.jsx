@@ -204,13 +204,13 @@ const Payment = () => {
             return [
                 {
                     name: 'lastDigits',
-                    label: t.creditCardNumber, // Assuming you have this translation key
+                    label: t.creditCardNumber,
                     type: 'text',
                     placeholder: '43537457455'
                 },
                 {
                     name: 'expirationDate',
-                    label: t.expirationDate, // Assuming you have this translation key
+                    label: t.expirationDate,
                     type: 'month',
                     placeholder: ''
                 }
@@ -219,7 +219,7 @@ const Payment = () => {
             return [
                 {
                     name: 'email',
-                    label: t.email, // Assuming you have this translation key
+                    label: t.email,
                     type: 'email',
                     placeholder: 'your@email.com'
                 }

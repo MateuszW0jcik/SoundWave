@@ -3,12 +3,11 @@ import Header from "../components/Header.jsx";
 import Footer from "../components/Footer.jsx";
 import faqBanner from "../assets/banners/FAQ.png";
 import {Link} from "react-router-dom";
-import {useTranslations} from "../contexts/LanguageContext.jsx"; // Adjust the path as needed
+import {useTranslations} from "../contexts/LanguageContext.jsx";
 
 const Faq = () => {
-    const t = useTranslations(); // Initialize useTranslations hook
+    const t = useTranslations();
 
-    // The faqData is now directly accessed from the translation file
     const faqData = t.faqData;
 
     return (
@@ -35,7 +34,7 @@ const Faq = () => {
                     <div className="w-full max-w-3xl px-4">
                         {faqData.map((faq, index) => (
                             <div
-                                key={index} // Use index as key since faq.id is no longer available directly
+                                key={index}
                                 className={`pb-5 mb-8 ${index < faqData.length - 1 ? 'border-b border-gray-200' : ''}`}
                             >
                                 <h3 className="text-lg md:text-xl font-semibold text-gray-800 mb-3 leading-snug text-center">
