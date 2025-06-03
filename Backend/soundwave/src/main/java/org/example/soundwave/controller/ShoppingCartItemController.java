@@ -38,6 +38,15 @@ public class ShoppingCartItemController {
         return ResponseEntity.noContent().build();
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateUserShoppingCartItem(@PathVariable Long id,
+                                                        @RequestBody Long newQuantity,
+                                                        @AuthenticationPrincipal UserDetails userDetails) {
+        User user = userService.findUserByUsername(userDetails.getUsername());
+        shoppingCartItemService.updateUserShoppingCartItem(id, newQuantity, user);
+        return ResponseEntity.noContent().build();
+    }
+
     @DeleteMapping("/user/{id}")
     public ResponseEntity<?> deleteUserShoppingCartItem(@PathVariable Long id,
                                                         @AuthenticationPrincipal UserDetails userDetails) {

@@ -1,5 +1,6 @@
 package org.example.soundwave.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.example.soundwave.model.dto.ShoppingCartItemDTO;
 import org.example.soundwave.model.entity.Product;
@@ -19,17 +20,19 @@ public class ShoppingCartItemService {
     private final ShoppingCartItemRepository shoppingCartItemRepository;
     private final ProductService productService;
 
+    @Transactional
     public List<ShoppingCartItemDTO> getUserShoppingCartItemsDTO(User user) {
-        return shoppingCartItemRepository.findShoppingCartItemsByUser(user)
+        return shoppingCartItemRepository.findShoppingCartItemsByUserOrderByIdAsc(user)
                 .stream()
                 .map(ShoppingCartItemDTO::new)
                 .collect(Collectors.toList());
     }
 
     public List<ShoppingCartItem> getUserShoppingCartItems(User user) {
-        return shoppingCartItemRepository.findShoppingCartItemsByUser(user);
+        return shoppingCartItemRepository.findShoppingCartItemsByUserOrderByIdAsc(user);
     }
 
+    @Transactional
     public void addUserShoppingCartItem(ShoppingCartItemRequest request, User user) {
         Product product = productService.findProductById(request.productId());
         if (existsShoppingCartItemByProductAndUser(product, user)) {
@@ -84,5 +87,16 @@ public class ShoppingCartItemService {
         for(ShoppingCartItem shoppingCartItem : shoppingCartItems){
             deleteShoppingCartItem(shoppingCartItem);
         }
+    }
+
+    public void updateUserShoppingCartItem(Long id, Long newQuantity, User user) {
+        ShoppingCartItem shoppingCartItem = findShoppingCartItemById(id);
+
+        if (!shoppingCartItem.getUser().equals(user)) {
+            throw new ShoppingCartItemException("User do not contains this shopping cart item");
+        }
+
+        shoppingCartItem.setQuantity(newQuantity);
+        saveShoppingCartItem(shoppingCartItem);
     }
 }

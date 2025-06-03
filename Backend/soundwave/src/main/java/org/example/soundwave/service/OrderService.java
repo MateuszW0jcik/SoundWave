@@ -1,5 +1,6 @@
 package org.example.soundwave.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.example.soundwave.model.dto.BrandDTO;
 import org.example.soundwave.model.dto.OrderDTO;
@@ -111,6 +112,7 @@ public class OrderService {
         return orderDetailsDTO;
     }
 
+    @Transactional
     public void createOrder(OrderRequest request, User user) {
         Contact contact = contactService.findContactById(request.contactId());
         if (!contact.getUser().equals(user)) {

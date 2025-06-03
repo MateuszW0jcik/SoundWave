@@ -45,12 +45,15 @@ public class SecurityConfig {
                                 "/api/auth/**",
                                 "/api/product",
                                 "/api/product/{id}",
+                                "/api/product/{id}/image",
                                 "/api/product/new",
                                 "/api/product/best",
                                 "/api/brand",
+                                "/api/brand/all",
                                 "/api/message/create",
                                 "/api/shipping_method",
-                                "/api/type"
+                                "/api/type",
+                                "/api/type/all"
                                 ).permitAll()
                         .anyRequest().authenticated()
                 )
